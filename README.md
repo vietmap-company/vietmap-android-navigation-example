@@ -1,20 +1,20 @@
 # **Tài liệu hướng dẫn cài đặt VietMap Navigation Android SDK**
 ## Mục lục
-[1. Cấu hình gradle và AndroidManifest](/INSTALL.md#i-thêm-các-dependencies-vào-buildgradle-module-app)
+[1. Cấu hình gradle và AndroidManifest](/README.md#i-thêm-các-dependencies-vào-buildgradle-module-app)
 
-[2. Thêm các values cấu hình cho project](/INSTALL.md#ii-thêm-các-values-cấu-hình-cho-project)
+[2. Thêm các values cấu hình cho project](/README.md#ii-thêm-các-values-cấu-hình-cho-project)
 
-[3. Tạo activity navigation để sử dụng sdk](/INSTALL.md#iii-tạo-activity-navigation-để-sử-dụng-sdk)
+[3. Tạo activity navigation để sử dụng sdk](/README.md#iii-tạo-activity-navigation-để-sử-dụng-sdk)
 
-[4. Fetch route (Tìm một tuyến đường)](/INSTALL.md#iv-tìm-một-tuyến-đường)
+[4. Fetch route (Tìm một tuyến đường)](/README.md#iv-tìm-một-tuyến-đường)
 
-[5. Start Navigation (Bắt đầu dẫn đường)](/INSTALL.md#v-start-navigation)
+[5. Start Navigation (Bắt đầu dẫn đường)](/README.md#v-start-navigation)
 
-[6. Request quyền vị trí tại file MainActivity](/INSTALL.md#tại-mainactivity-thêm-hàm-kiểm-tra-quyền-vị-trí-và-button-chuyển-qua-màn-hình-dẫn-đường)
+[6. Request quyền vị trí tại file MainActivity](/README.md#tại-mainactivity-thêm-hàm-kiểm-tra-quyền-vị-trí-và-button-chuyển-qua-màn-hình-dẫn-đường)
 
-[7. Custom UI (Tuỳ chỉnh giao diện)](/INSTALL.md#custom-ui-tuỳ-chỉnh-giao-diện)
+[7. Custom UI (Tuỳ chỉnh giao diện)](/README.md#custom-ui-tuỳ-chỉnh-giao-diện)
 
-[8. Thêm accessToken và styleUrl](/INSTALL.md#thêm-accesstoken-và-styleurl)
+[8. Thêm accessToken và styleUrl](/README.md#thêm-accesstoken-và-styleurl)
 
 ###  **I**. Thêm các dependencies vào build.gradle module app
 
@@ -1075,14 +1075,14 @@ Chỉnh sửa hàm **stopNavigation**:
     }
 ```
 
-- Các thông tin về đường đi, khoảng cách,... được trả về tại hàm [_**onProgressChange**_](/INSTALL.md#hàm-onprogresschange-lắng-nghe-khi-người-dùng-di-chuyển-liên-tục-cập-nhật-thông-tin-về-tuyến-đường-người-dùng-đang-di-chuyển-khoảng-cách-còn-lại)
+- Các thông tin về đường đi, khoảng cách,... được trả về tại hàm [_**onProgressChange**_](/README.md#hàm-onprogresschange-lắng-nghe-khi-người-dùng-di-chuyển-liên-tục-cập-nhật-thông-tin-về-tuyến-đường-người-dùng-đang-di-chuyển-khoảng-cách-còn-lại)
 
 # Thêm **accessToken** và  **styleUrl**
 Để đảm bảo ứng dụng không bị crash khi chạy, bạn cần thêm đầy đủ **styleUrl** và **accessToken** mà VietMap cung cấp tại các vi trí sau:
 
-[Thêm **_styleUrl_** tại file _src/values/string.xml_](/INSTALL.md#lưu-ý-cần-thêm-styleurl-cho-key-map_view_style_url-để-chạy-navigation)
+[Thêm **_styleUrl_** tại file _src/values/string.xml_](/README.md#lưu-ý-cần-thêm-styleurl-cho-key-map_view_style_url-để-chạy-navigation)
 
-[Thêm **_styleUrl_** tại hàm **onMapReady**](/INSTALL.md#tại-hàm-onmapready)
+[Thêm **_styleUrl_** tại hàm **onMapReady**](/README.md#tại-hàm-onmapready)
 
 
-[Thêm **_accessToken_** tại hàm **fetchRoute**](/INSTALL.md#từ-hai-điểm-point-và-destination-này-chúng-ta-có-thể-gọi-hàm-fetchroute-như-sau)
+[Thêm **_accessToken_** tại hàm **fetchRoute**](/README.md#từ-hai-điểm-point-và-destination-này-chúng-ta-có-thể-gọi-hàm-fetchroute-như-sau)
