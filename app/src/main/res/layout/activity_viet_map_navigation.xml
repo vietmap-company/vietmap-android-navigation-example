@@ -6,26 +6,29 @@
     android:layout_height="match_parent"
     android:id="@+id/vietmapNavigation">
 
-    <com.mapbox.services.android.navigation.ui.v5.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        app:maplibre_cameraZoom="16"
-        app:layout_constraintHeight_percent="0.5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationDarkTheme="@style/NavigationViewDark"
-        app:navigationLightTheme="@style/NavigationViewLight"/>
+
 
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:maplibre_cameraZoom="16"
+        app:maplibre_cameraZoom="17"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="1"/>
+
+
+    <com.mapbox.services.android.navigation.ui.v5.NavigationView
+        android:id="@+id/navigationView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintTop_creator="@android:integer/config_mediumAnimTime"
+        app:maplibre_cameraZoom="18"
+        app:layout_constraintHeight_percent="0.001"
+        app:layout_constraintTop_toTopOf="@id/mapView"
+        app:navigationDarkTheme="@style/NavigationViewDark"
+        app:navigationLightTheme="@style/NavigationViewLight"/>
 
     <ProgressBar
         android:id="@+id/loading"
@@ -38,53 +41,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        android:id="@+id/navigationAction"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent">
-        <Button
-            android:id="@+id/overViewRouteButton"
-            android:layout_width="wrap_content"
-            app:layout_constraintStart_toEndOf="@+id/stopNavigation"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/stopNavigation"
-            android:layout_gravity="top"
-            android:layout_margin="16dp"
-            android:text="Over View"
-            app:layout_anchorGravity="top|left"
-            android:visibility="gone"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-        <Button
-            android:id="@+id/recenterBtnCustom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_gravity="top"
-            android:layout_margin="16dp"
-            android:text="Recenter"
-            android:visibility="gone"
-            android:textColor="@color/black"
-            app:layout_anchorGravity="top|left"
-            app:layout_constraintStart_toStartOf="parent" />
-        <Button
-            android:id="@+id/stopNavigation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            app:layout_constraintTop_toBottomOf="@id/overViewRouteButton"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_gravity="top"
-            android:layout_margin="16dp"
-            android:text="Stop"
-            app:layout_anchorGravity="top|left"
-            app:layout_constraintStart_toStartOf="parent" />
-    </androidx.appcompat.widget.LinearLayoutCompat>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/launchNavigation"
         android:layout_width="wrap_content"
@@ -98,4 +54,23 @@
         app:backgroundTint="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomSheetInfo">
+        <include layout="@layout/bottom_sheet_layout" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <ImageButton
+        android:id="@+id/recenterBtnCustom"
+        android:layout_width="125dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:background="@android:color/transparent"
+        android:scaleType="fitCenter"
+        android:src="@drawable/recenter_button_1"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

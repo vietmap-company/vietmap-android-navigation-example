@@ -64,4 +64,8 @@
             YOUR STYLE URL HERE
         </item>
     </style>
+
+    <style name="progressBarBlue" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">@color/blue</item>
+    </style>
 </resources>

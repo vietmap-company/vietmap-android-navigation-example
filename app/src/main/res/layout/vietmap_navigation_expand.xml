@@ -6,26 +6,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <com.mapbox.services.android.navigation.ui.v5.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="visible"
-        app:maplibre_cameraZoom="15"
+        app:maplibre_cameraZoom="20"
         app:layout_constraintHeight_percent="1"
-        app:layout_constraintTop_toTopOf="@+id/vietmapNavigationExpand"
         app:layout_constraintBottom_toBottomOf="@+id/vietmapNavigationExpand"
         app:navigationDarkTheme="@style/NavigationViewDark"
         app:navigationLightTheme="@style/NavigationViewLight"/>
-
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:maplibre_cameraZoom="15"
+        app:maplibre_cameraZoom="20"
         android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/vietmapNavigationExpand"
         app:layout_constraintBottom_toBottomOf="@+id/vietmapNavigationExpand"
-        app:layout_constraintHeight_percent="0"/>
+        app:layout_constraintHeight_percent="1"/>
+
+
 
     <ProgressBar
         android:id="@+id/loading"
