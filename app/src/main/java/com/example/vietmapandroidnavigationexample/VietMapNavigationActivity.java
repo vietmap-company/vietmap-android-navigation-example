@@ -387,7 +387,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     private void fetchRoute(Point origin, Point destination) {
         NavigationRoute builder = NavigationRoute.builder(this)
                 .baseUrl("https://maps.vnpost.vn/navigation_dev/route/")
-                .accessToken("pk.eyJ1Ijoic2VubmQiLCJhIjoiY2tkcmdzbDB4MDhzcDJ6bzdoOXNwazduMSJ9.in-0A1ZX6yzIMtnJcLdcRw")
+                .apikey("pk.eyJ1Ijoic2VubmQiLCJhIjoiY2tkcmdzbDB4MDhzcDJ6bzdoOXNwazduMSJ9.in-0A1ZX6yzIMtnJcLdcRw")
                 .origin(origin).destination(destination).alternatives(true).profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC).build();
         builder.getRoute(this);
     }
