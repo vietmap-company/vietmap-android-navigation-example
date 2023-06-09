@@ -14,7 +14,7 @@
 
 [7. Custom UI (Tuỳ chỉnh giao diện)](/README.md#custom-ui-tuỳ-chỉnh-giao-diện)
 
-[8. Thêm accessToken và styleUrl](/README.md#thêm-accesstoken-và-styleurl)
+[8. Thêm apikey và styleUrl](/README.md#thêm-apikey-và-styleurl)
 
 ###  **I**. Thêm các dependencies vào build.gradle module app
 
@@ -25,12 +25,16 @@
     implementation "com.google.android.gms:play-services-location:21.0.1"
     implementation "com.jakewharton:butterknife:10.2.3"
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.github.nhatpham0301:vietmap-sdk:1.0.3'
-    implementation 'com.github.nhatpham0301:vietmap-android-navigation-ui:1.1.2'
-    implementation 'com.github.nhatpham0301:vietmap-android-navigation:1.0.2'
-    implementation 'org.maplibre.gl:android-sdk-services:5.9.0'
-    implementation 'org.maplibre.gl:android-sdk-turf:5.9.0'
+    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.0'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.0'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.0'
+    implementation 'com.github.vietmap-company:vietmap-services-directions-models:1.0.1'
+    implementation 'com.github.vietmap-company:vietmap-services-turf-android:1.0.2'
+    implementation 'com.github.vietmap-company:vietmap-services-android:1.0.8'
     implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'com.github.vietmap-company:vietmap-services-geojson-android:1.0.0'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 ```
 Cấu hình **jitpack repository** tại file **setting.gradle**
 ```gradle
@@ -661,7 +665,7 @@ Ví dụ:
 ```java
 private void fetchRoute(Point origin, Point destination) {
         NavigationRoute builder = NavigationRoute.builder(this)
-                .accessToken("YOUR_ACCESS_TOKEN_HERE")
+                .apikey("YOUR_ACCESS_TOKEN_HERE")
                 .origin(origin)
                 .destination(destination)
                 .alternatives(true)
@@ -1077,12 +1081,12 @@ Chỉnh sửa hàm **stopNavigation**:
 
 - Các thông tin về đường đi, khoảng cách,... được trả về tại hàm [_**onProgressChange**_](/README.md#hàm-onprogresschange-lắng-nghe-khi-người-dùng-di-chuyển-liên-tục-cập-nhật-thông-tin-về-tuyến-đường-người-dùng-đang-di-chuyển-khoảng-cách-còn-lại)
 
-# Thêm **accessToken** và  **styleUrl**
-Để đảm bảo ứng dụng không bị crash khi chạy, bạn cần thêm đầy đủ **styleUrl** và **accessToken** mà VietMap cung cấp tại các vi trí sau:
+# Thêm **apikey** và  **styleUrl**
+Để đảm bảo ứng dụng không bị crash khi chạy, bạn cần thêm đầy đủ **styleUrl** và **apikey** mà VietMap cung cấp tại các vi trí sau:
 
 [Thêm **_styleUrl_** tại file _src/values/string.xml_](/README.md#lưu-ý-cần-thêm-styleurl-cho-key-map_view_style_url-để-chạy-navigation)
 
 [Thêm **_styleUrl_** tại hàm **onMapReady**](/README.md#tại-hàm-onmapready)
 
 
-[Thêm **_accessToken_** tại hàm **fetchRoute**](/README.md#từ-hai-điểm-point-và-destination-này-chúng-ta-có-thể-gọi-hàm-fetchroute-như-sau)
+[Thêm **_apikey_** tại hàm **fetchRoute**](/README.md#từ-hai-điểm-point-và-destination-này-chúng-ta-có-thể-gọi-hàm-fetchroute-như-sau)
