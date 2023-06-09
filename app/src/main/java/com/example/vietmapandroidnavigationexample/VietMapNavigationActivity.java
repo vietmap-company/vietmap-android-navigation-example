@@ -295,7 +295,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/961aaa3a-f380-46be-9159-09cc985d9326"), style -> {
+        mapboxMap.setStyle(new Style.Builder().fromUri(YOUR_STYLE_MAP_URL_HERE), style -> {
             initLocationEngine();
             getCurrentLocation();
             enableLocationComponent(style);
@@ -386,8 +386,8 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     private void fetchRoute(Point origin, Point destination) {
         NavigationRoute builder = NavigationRoute.builder(this)
-                .baseUrl("https://maps.vnpost.vn/navigation_dev/route/")
-                .apikey("pk.eyJ1Ijoic2VubmQiLCJhIjoiY2tkcmdzbDB4MDhzcDJ6bzdoOXNwazduMSJ9.in-0A1ZX6yzIMtnJcLdcRw")
+                .baseUrl(VIETMAP_ROUTING_URL_HERE)
+                .apikey(YOUR_API_KEY_URL_HERE)
                 .origin(origin).destination(destination).alternatives(true).profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC).build();
         builder.getRoute(this);
     }
