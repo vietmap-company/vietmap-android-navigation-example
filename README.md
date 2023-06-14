@@ -28,6 +28,7 @@
     implementation 'com.github.vietmap-company:maps-sdk-android:1.0.0'
     implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.0'
     implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.0'
+    implementation 'com.github.vietmap-company:vietmap-services-core:1.0.0'
     implementation 'com.github.vietmap-company:vietmap-services-directions-models:1.0.1'
     implementation 'com.github.vietmap-company:vietmap-services-turf-android:1.0.2'
     implementation 'com.github.vietmap-company:vietmap-services-android:1.0.8'
@@ -35,6 +36,8 @@
     implementation 'com.github.vietmap-company:vietmap-services-geojson-android:1.0.0'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
 ```
 Cấu hình **jitpack repository** tại file **setting.gradle**
 ```gradle

@@ -295,7 +295,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri(YOUR_STYLE_MAP_URL_HERE), style -> {
+        mapboxMap.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/961aaa3a-f380-46be-9159-09cc985d9326"), style -> {
             initLocationEngine();
             getCurrentLocation();
             enableLocationComponent(style);
@@ -386,9 +386,9 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     private void fetchRoute(Point origin, Point destination) {
         NavigationRoute builder = NavigationRoute.builder(this)
-                .baseUrl(VIETMAP_ROUTING_URL_HERE)
-                .apikey(YOUR_API_KEY_URL_HERE)
-                .origin(origin).destination(destination).alternatives(true).profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC).build();
+                .baseUrl("https://maps.vietmap.vn/api/navigations/route/")
+                .apikey(YOUR_API_KEY_GOES_HERE)
+                .origin(origin).destination(destination).build();
         builder.getRoute(this);
     }
 
@@ -581,28 +581,6 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     @Override
-    public void onBackPressed() {
-        stopNavigationFunction();
-
-        if (!navigationView.onBackPressed()) {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        navigationView.onSaveInstanceState(outState);
-        mapView.onSaveInstanceState(outState);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        navigationView.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         navigationView.onPause();
@@ -626,6 +604,28 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         navigationView.onDestroy();
         if (locationEngine != null) {
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        stopNavigationFunction();
+
+        if (!navigationView.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        navigationView.onSaveInstanceState(outState);
+        mapView.onSaveInstanceState(outState);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        navigationView.onRestoreInstanceState(savedInstanceState);
     }
 
     void changeNavigationActionState(boolean isNavigationRunning) {
