@@ -217,7 +217,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:fontFamily="serif"
-                        android:text="km"
+                        android:text="phút"
                         android:textColor="@android:color/darker_gray"
                         android:textSize="15sp" />
                 </LinearLayout>

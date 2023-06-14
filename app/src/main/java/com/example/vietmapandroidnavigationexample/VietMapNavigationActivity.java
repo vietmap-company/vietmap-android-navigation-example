@@ -295,14 +295,15 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/961aaa3a-f380-46be-9159-09cc985d9326"), style -> {
+        mapboxMap.setStyle(new Style.Builder().fromUri(YOUR_STYLE_MAP_URL_HERE), style -> {
             initLocationEngine();
             getCurrentLocation();
             enableLocationComponent(style);
             initMapRoute();
         });
         this.mapboxMap.addOnMapClickListener(this);
-    }
+        this.mapboxMap.addOnMapLongClickListener(this);
+        Toast.makeText(this,"Long click on the map to place a destination point and fetch the route",Toast.LENGTH_LONG).show();}
 
     private void expandCollapse() {
         TransitionManager.beginDelayedTransition(customUINavigation);
@@ -644,16 +645,18 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     @Override
     public boolean onMapClick(@NonNull LatLng latLng) {
-        getCurrentLocation();
-        destination = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
-        if (origin != null) {
-            fetchRoute(origin, destination);
-        }
+
         return false;
     }
 
     @Override
     public boolean onMapLongClick(@NonNull LatLng latLng) {
+
+        getCurrentLocation();
+        destination = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
+        if (origin != null) {
+            fetchRoute(origin, destination);
+        }
         return false;
     }
 
