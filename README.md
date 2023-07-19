@@ -25,7 +25,7 @@
     implementation "com.google.android.gms:play-services-location:21.0.1"
     implementation "com.jakewharton:butterknife:10.2.3"
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.0'
+    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.3'
     implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.0'
     implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.0'
     implementation 'com.github.vietmap-company:vietmap-services-core:1.0.0'
