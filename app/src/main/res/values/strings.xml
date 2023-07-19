@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">VietMap Navigation Demo</string>
+    <string name="app_name">Dẫn đường VietMap</string>
 
     <string name="title_mock_navigation">Giả bộ Điều hướng</string>
     <string name="description_mock_navigation">Giả bộ phiên điều hướng dùng máy định vị giả.</string>
@@ -58,9 +58,10 @@
     <string name="current_night_mode" translatable="false">current_night_mode</string>
 
     <string name="new_location">Vĩ độ: %1$s Kinh độ: %2$s</string>
-    <string name="map_view_style_url" translatable="false">YOUR_STYLE_MAP_URL_HERE</string>
+    <string name="map_view_style_url" translatable="false">https://run.mocky.io/v3/06602373-c116-41cc-9af6-1ce0dc7807ae</string>
 
     <string name="user_location_permission_explanation">Ứng dụng này cần sử dụng quyền vị trí để hoạt động chính xác.</string>
     <string name="user_location_permission_not_granted">Bạn chưa cung cấp quyền vị trí.</string>
+    <string name="tts_guide">Nếu ứng dụng không phát âm dẫn đường, vui lòng nhấn nút cài đặt dưới đây và lựa chọn công cụ chuyển văn bản thành giọng nói về Google rồi thử lại.</string>
 
 </resources>

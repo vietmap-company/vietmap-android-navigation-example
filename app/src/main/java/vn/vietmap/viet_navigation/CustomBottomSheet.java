@@ -1,10 +1,11 @@
-package com.example.vietmapandroidnavigationexample;
+package vn.vietmap.viet_navigation;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import vn.vietmap.viet_navigation.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 public class CustomBottomSheet extends AppCompatActivity {
     private LinearLayout mBottomSheetLayout;
@@ -27,4 +28,5 @@ public class CustomBottomSheet extends AppCompatActivity {
             }
         });
     }
+    // navigationView.navigationViewModel.speechPlayer.setMuted(true);
 }

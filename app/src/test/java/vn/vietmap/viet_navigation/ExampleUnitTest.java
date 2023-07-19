@@ -1,4 +1,4 @@
-package com.example.vietmapandroidnavigationexample;
+package vn.vietmap.viet_navigation;
 
 import org.junit.Test;
 

@@ -1,25 +1,47 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
 android {
-    namespace 'com.example.vietmapandroidnavigationexample'
+    namespace 'vn.vietmap.viet_navigation'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.vietmapandroidnavigationexample"
+        applicationId "vn.vietmap.viet_navigation"
         minSdk 21
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+            storePassword keystoreProperties['storePassword']
+        }
+    }
     buildTypes {
         release {
+            defaultConfig
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.release
+            minifyEnabled true  // enables ProGuard
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -29,9 +51,13 @@ android {
 }
 
 dependencies {
+    implementation 'com.github.arimorty:floatingsearchview:2.1.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation platform('com.google.firebase:firebase-bom:32.1.1')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation("com.google.firebase:firebase-crashlytics")
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -41,13 +67,13 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:21.0.1"
     implementation "com.jakewharton:butterknife:10.2.3"
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.0'
-    implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.0'
-    implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.0'
-    implementation 'com.github.vietmap-company:vietmap-services-core:1.0.0'
+    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.3'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.6'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.1'
+    implementation 'com.github.vietmap-company:vietmap-services-core:1.0.1'
     implementation 'com.github.vietmap-company:vietmap-services-directions-models:1.0.1'
     implementation 'com.github.vietmap-company:vietmap-services-turf-android:1.0.2'
-    implementation 'com.github.vietmap-company:vietmap-services-android:1.0.8'
+    implementation 'com.github.vietmap-company:vietmap-services-android:1.1.2'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'com.github.vietmap-company:vietmap-services-geojson-android:1.0.0'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'

@@ -1,9 +1,11 @@
-package com.example.vietmapandroidnavigationexample;
+package vn.vietmap.viet_navigation;
 
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcel;
 import android.transition.Slide;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -25,18 +27,29 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityCompat;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
+import vn.vietmap.viet_navigation.R;
+
+import vn.vietmap.viet_navigation.interfaces.RetrofitAPI;
+import vn.vietmap.viet_navigation.models.VietMapV3PlaceModel;
+import vn.vietmap.viet_navigation.models.VietMapV3SearchResponse;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mapbox.android.gestures.MoveGestureDetector;
-import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.engine.LocationEngine;
@@ -72,6 +85,8 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class VietMapNavigationActivity extends AppCompatActivity implements OnNavigationReadyCallback, ProgressChangeListener, NavigationListener, Callback<DirectionsResponse>, OnMapReadyCallback, MapboxMap.OnMapClickListener, MapboxMap.OnMapLongClickListener, MapboxMap.OnMoveListener, OnRouteSelectionChangeListener, OffRouteListener, RouteListener, NavigationEventListener {
     private static final int DEFAULT_CAMERA_ZOOM = 18;
@@ -106,41 +121,55 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     private TextView distanceRemaining;
     private SeekBar routeProgressBar;
     private double routeDistance;//Meter
+    private ImageButton muteButton;
+    final String BASE_URL = "https://maps.vietmap.vn/";
+    Gson gson = new GsonBuilder()
+            .setLenient()
+            .create();
+    Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build();
+    RetrofitAPI retrofitAPI = retrofit.create(RetrofitAPI.class);
+    private FloatingSearchView vietMapSearchBar;
+    private Runnable searchRunnable;
+    private final Handler handler = new Handler();
+    private List<VietMapV3SearchResponse> responseData;
+    private String nextNavigationGuide = "";
     private final ProgressChangeListener progressChangeListener = (location, routeProgress) -> {
-        System.out.println("Progress Changing");
-        System.out.println(routeProgress.legIndex());
-
         List<BannerInstructions> bannerInstructionsList = routeProgress.currentLegProgress().currentStep().bannerInstructions();
 
-//        ((TextView) findViewById(R.id.bottom_sheet_title)).setText(bannerInstructionsList.get(0).primary().text());
-//        if (routeProgress.currentLegProgress().followOnStep() != null) {
-//            ((TextView) findViewById(R.id.bannerInstructionInfo)).setText(routeProgress.currentLegProgress().upComingStep().maneuver().instruction());
-//        }else{
-//            ((TextView) findViewById(R.id.bannerInstructionInfo)).setText("");
-//        }
         if (routeProgress.currentLegProgress() != null) {
             ArrayList<String> data = calculateTime(Math.round(routeProgress.currentLegProgress().durationRemaining()));
-            ((TextView) findViewById(R.id.estimate_time_remaining)).setText(TimeUnit.SECONDS.toMinutes(Math.round(routeProgress.currentLegProgress().durationRemaining())) +"");
-            ((TextView) findViewById(R.id.estimate_time_arrive)).setText(data.get(1) );
-            ((TextView) findViewById(R.id.all_route_distance)).setText(round(routeDistance / 1000, 2)+"");
-            ((TextView) findViewById(R.id.distance_remaining)).setText(String.valueOf(round(routeProgress.currentLegProgress().distanceRemaining() / 1000, 2)));
+            ((TextView) findViewById(R.id.estimate_time_remaining)).setText(TimeUnit.SECONDS.toMinutes(Math.round(routeProgress.currentLegProgress().durationRemaining())) + "");
+            ((TextView) findViewById(R.id.estimate_time_arrive)).setText(data.get(1));
+            ((TextView) findViewById(R.id.all_route_distance)).setText(round(routeDistance / 1000, 2) + "");
+//            ((TextView) findViewById(R.id.distance_remaining)).setText(String.valueOf(round(routeProgress.currentLegProgress().distanceRemaining() / 1000, 2)));
+            Double stepDistanceRemaining = round(routeProgress.stepDistanceRemaining() / 1000, 2);
+            String distanceUnit = "Km";
+            if (stepDistanceRemaining < 1) {
+                distanceUnit = "mét";
+                stepDistanceRemaining *= 1000;
+                ((TextView) findViewById(R.id.distance_remaining)).setText(String.valueOf(stepDistanceRemaining.intValue()));
+            } else {
+                ((TextView) findViewById(R.id.distance_remaining)).setText(String.valueOf(stepDistanceRemaining));
+            }
+            ((TextView) findViewById(R.id.distance_remaining_suffix)).setText(" " + distanceUnit + ", " + nextNavigationGuide.toLowerCase());
 
             ((SeekBar) findViewById(R.id.route_progress_bar)).setProgress(Math.toIntExact(Math.round((routeDistance - routeProgress.currentLegProgress().distanceRemaining()) / routeDistance * 100)));
-            System.out.println(routeProgress.currentLegProgress().distanceRemaining());
-            System.out.println(routeDistance);
-            System.out.println(Math.round((routeDistance - routeProgress.currentLegProgress().distanceRemaining()) / routeDistance * 100));
-//            routeDistance
+            System.out.println(routeProgress.stepDistanceRemaining());
         }
         if (!bannerInstructionsList.isEmpty()) {
             setManeuverInstructionIcon(bannerInstructionsList.get(0).primary().modifier(), bannerInstructionsList.get(0).primary().type());
 
             ((TextView) findViewById(R.id.bottom_sheet_title)).setText(bannerInstructionsList.get(0).primary().text());
         } else {
-
             ((TextView) findViewById(R.id.bottom_sheet_title)).setText("");
         }
 
+
     };
+    private final String apiKey = "08fdd26db92b7b06c026d314342b3c7e6685a4486943be42";
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -193,13 +222,16 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getSupportActionBar().hide();
         Mapbox.getInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viet_map_navigation);
+
         CustomNavigationNotification customNotification = new CustomNavigationNotification(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             customNotification.createNotificationChannel(this);
         }
+        muteButton = findViewById(R.id.mute);
         MapboxNavigationOptions options = MapboxNavigationOptions.builder()
                 .navigationNotification(customNotification).build();
         mapboxNavigation = new MapboxNavigation(this, options);
@@ -211,16 +243,25 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         navigationMapExpandedConstraint = new ConstraintSet();
         navigationMapExpandedConstraint.clone(this, R.layout.vietmap_navigation_expand);
         constraintChanged = new boolean[]{false};
-
+        vietMapSearchBar = findViewById(R.id.floating_search_view);
         navigationView.initViewConfig(true);
         NavigationPresenter navigationPresenter = navigationView.getNavigationPresenter();
-        recenterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                navigationPresenter.onRecenterClick();
-                changeNavigationActionState(true);
+        muteButton.setOnClickListener(v->{
+            System.out.println("--------------------------muted click");
+            if(navigationView.navigationViewModel.speechPlayer.isMuted()){
+                System.out.println("--------------------------muted");
+                navigationView.navigationViewModel.speechPlayer.setMuted(false);
+                muteButton.setImageDrawable(getResources().getDrawable( R.drawable.volume_up_24px_rounded));
+            }else{
+                System.out.println("--------------------------unmuted");
+                muteButton.setImageDrawable(getResources().getDrawable( R.drawable.volume_off_24px_rounded));
+                navigationView.navigationViewModel.speechPlayer.setMuted(true);
             }
+        });
+        recenterButton.setOnClickListener(v -> {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            navigationPresenter.onRecenterClick();
+            changeNavigationActionState(true);
         });
         overViewRouteButton.setOnClickListener(view -> {
             sheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
@@ -234,6 +275,43 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
         });
         initBottomSheetInfo();
+        vietMapSearchBar.setOnQueryChangeListener((oldQuery, newQuery) -> {
+            handler.removeCallbacks(searchRunnable); // Cancel any pending search requests
+
+            searchRunnable = () -> {
+                if (!newQuery.isEmpty()) {
+                    searchAddress(newQuery);
+                    loading.setVisibility(View.VISIBLE);
+                } else {
+                    vietMapSearchBar.clearSuggestions();
+                    responseData = null;
+                }
+            };
+
+            handler.postDelayed(searchRunnable, 500);
+        });
+
+        vietMapSearchBar.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            @Override
+            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
+                System.out.println(searchSuggestion.getBody());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    responseData.forEach(featureData -> {
+                        if (featureData.getDisplay() == searchSuggestion.getBody()) {
+                            getPlaceLocationAndFetchRoute(featureData.getRef_id());
+                            vietMapSearchBar.clearSearchFocus();
+                            return;
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onSearchAction(String currentQuery) {
+                System.out.println(currentQuery);
+                searchAddress(currentQuery);
+            }
+        });
     }
 
     private void initBottomSheetInfo() {
@@ -249,7 +327,9 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                changeNavigationActionState(newState != BottomSheetBehavior.STATE_HIDDEN);
+                if (isNavigationRunning) {
+                    changeNavigationActionState(newState != BottomSheetBehavior.STATE_HIDDEN);
+                }
             }
 
             @Override
@@ -273,7 +353,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         navigationView = findViewById(R.id.navigationView);
         loading = findViewById(R.id.loading);
         launchNavigationFab = findViewById(R.id.launchNavigation);
-        navigationView.onCreate(savedInstanceState);
+        navigationView.onCreate(savedInstanceState,null);
         mapView.onCreate(savedInstanceState);
         launchNavigationFab.setOnClickListener(v -> {
             expandCollapse();
@@ -283,27 +363,29 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         overViewRouteButton = findViewById(R.id.overViewRouteButton);
         stopNavigation = findViewById(R.id.stopNavigation);
         recenterButton = findViewById(R.id.recenterBtnCustom);
-
+        muteButton = findViewById(R.id.mute);
         Transition transition = new Slide(Gravity.BOTTOM);
         transition.setDuration(600);
         transition.addTarget(R.id.stopNavigation);
         transition.addTarget(R.id.recenterBtnCustom);
         transition.addTarget(R.id.overViewRouteButton);
+        transition.addTarget(R.id.mute);
 
     }
 
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri(YOUR_STYLE_MAP_URL_HERE), style -> {
+        mapboxMap.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/06602373-c116-41cc-9af6-1ce0dc7807ae"), style -> {
             initLocationEngine();
-            getCurrentLocation();
+            getCurrentLocation(true, false);
             enableLocationComponent(style);
             initMapRoute();
         });
         this.mapboxMap.addOnMapClickListener(this);
         this.mapboxMap.addOnMapLongClickListener(this);
-        Toast.makeText(this,"Long click on the map to place a destination point and fetch the route",Toast.LENGTH_LONG).show();}
+        Toast.makeText(this, "Nhấn giữ trên bản đồ hoặc tìm kiếm địa điểm để bắt đầu dẫn đường", Toast.LENGTH_LONG).show();
+    }
 
     private void expandCollapse() {
         TransitionManager.beginDelayedTransition(customUINavigation);
@@ -322,11 +404,13 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         return;
     }
 
-    private void getCurrentLocation() {
+    private void getCurrentLocation(Boolean isGetOrigin, Boolean isGetBearing) {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
-                    origin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                    if (isGetOrigin) {
+                        origin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+                    }
                 }
             });
             return;
@@ -366,14 +450,17 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         mapboxNavigation.stopNavigation();
         launchNavigationFab.show();
         recenterButton.setVisibility(View.GONE);
-        overViewRouteButton.setVisibility(View.GONE);
-        stopNavigation.setVisibility(View.GONE);
+//        overViewRouteButton.setVisibility(View.GONE);
+//        stopNavigation.setVisibility(View.GONE);
         navigationView.setVisibility(View.VISIBLE);
+        vietMapSearchBar.setVisibility(View.VISIBLE);
         mBottomSheetLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void onFailure(Call<DirectionsResponse> call, Throwable t) {
+        Toast.makeText(VietMapNavigationActivity.this, "Có lỗi xảy ra khi tìm đường đi", Toast.LENGTH_LONG).show();
+        loading.setVisibility(View.GONE);
         System.out.println(call);
     }
 
@@ -385,27 +472,113 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         reRoute = false;
     }
 
-    private void fetchRoute(Point origin, Point destination) {
-        NavigationRoute builder = NavigationRoute.builder(this)
-                .baseUrl("https://maps.vietmap.vn/api/navigations/route/")
-                .apikey(YOUR_API_KEY_GOES_HERE)
-                .origin(origin).destination(destination).build();
-        builder.getRoute(this);
+    private void fetchRouteWithBearing(Point origin, Point destination) {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    if (location.hasBearing()) {
+                        fetchRoute(Point.fromLngLat(location.getLongitude(), location.getLatitude()), destination, Double.valueOf(location.getBearing()));
+                    } else {
+                        fetchRoute(Point.fromLngLat(location.getLongitude(), location.getLatitude()), destination, null);
+                    }
+                }
+            });
+            return;
+        }
+    }
+
+    private void fetchRoute(Point origin, Point destination, @Nullable Double bearing) {
+        System.out.println("Bearingg-------------------" + bearing);
+        NavigationRoute.Builder builder = NavigationRoute
+                .builder(this)
+                .apikey("95f852d9f8c38e08ceacfd456b59059d0618254a50d3854c")
+                .origin(origin, bearing, bearing).destination(destination, bearing, bearing);
+
+        builder.build().getRoute(this);
+
+    }
+
+    private void searchAddress(String keySearch) {
+        retrofitAPI.autocomplete(keySearch, apiKey, origin.latitude() + "," + origin.longitude()).enqueue(new Callback<List<VietMapV3SearchResponse>>() {
+            public void onResponse(Call<List<VietMapV3SearchResponse>> call, Response<List<VietMapV3SearchResponse>> response) {
+                if (response.isSuccessful()) {
+                    responseData = response.body();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        ArrayList<SearchSuggestion> searchSuggestions = new ArrayList<SearchSuggestion>();
+                        responseData.forEach((featureData -> {
+                            searchSuggestions.add(new SearchSuggestion() {
+                                @Override
+                                public String getBody() {
+                                    return featureData.getDisplay();
+                                }
+
+                                @Override
+                                public int describeContents() {
+                                    return 0;
+                                }
+
+                                @Override
+                                public void writeToParcel(@NonNull Parcel dest, int flags) {
+
+                                }
+                            });
+                        }));
+                        vietMapSearchBar.swapSuggestions(searchSuggestions);
+                    }
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            public void onFailure(Call<List<VietMapV3SearchResponse>> call, Throwable t) {
+                Toast.makeText(VietMapNavigationActivity.this, "Có lỗi xảy ra khi lấy thông tin địa điểm", Toast.LENGTH_LONG).show();
+                loading.setVisibility(View.GONE);
+                t.printStackTrace();
+            }
+        });
+    }
+
+
+    private void getPlaceLocationAndFetchRoute(String refId) {
+        retrofitAPI.getPlaceData(refId, apiKey).enqueue(new Callback<VietMapV3PlaceModel>() {
+            public void onResponse(Call<VietMapV3PlaceModel> call, Response<VietMapV3PlaceModel> response) {
+                if (response.isSuccessful()) {
+                    destination = Point.fromLngLat(response.body().getLng(), response.body().getLat());
+                    fetchRouteWithBearing(origin, destination);
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            public void onFailure(Call<VietMapV3PlaceModel> call, Throwable t) {
+                Toast.makeText(VietMapNavigationActivity.this, "Có lỗi xảy ra khi lấy thông tin địa điểm", Toast.LENGTH_LONG).show();
+                loading.setVisibility(View.GONE);
+                t.printStackTrace();
+            }
+        });
     }
 
     @Override
     public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+        loading.setVisibility(View.GONE);
         if (validRouteResponse(response)) {
+            System.out.println(response.raw().request().url());
+            System.out.println("------------------------Request Url");
             if (reRoute) {
                 route = response.body().routes().get(0);
                 initNavigationOptions();
                 navigationView.updateCameraRouteOverview();
                 mapboxNavigation.addNavigationEventListener(this);
-                mapboxNavigation.startNavigation(route);
                 navigationView.startNavigation(this.mapviewNavigationOptions.build());
-//                reRoute = false;
                 isArrived = false;
             } else {
+                LatLngBounds.Builder boundsBuilder = new LatLngBounds.Builder();
+                boundsBuilder.include(new LatLng(origin.latitude(), origin.longitude()));
+                boundsBuilder.include(new LatLng(destination.latitude(), destination.longitude()));
+
+                LatLngBounds bounds = boundsBuilder.build();
+                CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+                mapboxMap.easeCamera(cameraUpdate, 800);
                 launchNavigationFab.show();
                 route = response.body().routes().get(0);
                 mapRoute.addRoutes(response.body().routes());
@@ -418,10 +591,20 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     void initNavigationOptions() {
-        MapboxNavigationOptions navigationOptions = MapboxNavigationOptions.builder().build();
-        mapviewNavigationOptions = NavigationViewOptions.builder().navigationListener(this).routeListener(this).navigationOptions(navigationOptions).locationEngine(locationEngine).shouldSimulateRoute(false).progressChangeListener(progressChangeListener).directionsRoute(route).onMoveListener(this);
+        MapboxNavigationOptions navigationOptions = MapboxNavigationOptions.builder()
+                .maximumDistanceOffRoute(10)
+                .build();
+        mapviewNavigationOptions = NavigationViewOptions
+                .builder().navigationListener(this)
+                .routeListener(this)
+                .navigationOptions(navigationOptions)
+                .locationEngine(locationEngine)
+                .shouldSimulateRoute(false)
+                .progressChangeListener(progressChangeListener)
+                .directionsRoute(route)
+                .onMoveListener(this);
 
-        navigationView.setCameraDistance(200L);
+        navigationView.setCameraDistance(100L);
         mBottomSheetLayout.setVisibility(View.VISIBLE);
     }
 
@@ -429,49 +612,104 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         System.out.println(type + modifier);
         switch (type + modifier) {
             case "turnleft":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.turn_left));
+                nextNavigationGuide = "Rẽ trái";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.turn_left));
                 break;
             case "turnright":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.turn_right));
+
+                nextNavigationGuide = "Rẽ phải";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.turn_right));
                 break;
             case "uturn":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.uturn_left));
+
+                nextNavigationGuide = "Rẽ trái và quay đầu";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.uturn_left));
                 break;
             case "turnsharp right":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.sharp_right));
+
+                nextNavigationGuide = "Rẽ phải và quay đầu";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.sharp_right));
                 break;
             case "turnslight right":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.slight_right));
+
+                nextNavigationGuide = "Rẽ chếch về phải";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.slight_right));
                 break;
             case "turnstraight":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.continue_straight));
+
+                nextNavigationGuide = "Tiếp tục đi thẳng";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.continue_straight));
                 break;
             case "turnslight left":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.slight_left));
+
+                nextNavigationGuide = "Rẽ chếch về trái";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.slight_left));
                 break;
             case "turnsharp left":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.sharp_left));
+                nextNavigationGuide = "Rẽ ngoặt về trái";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.sharp_left));
                 break;
             case "roundaboutright":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.roundabout_anticlockwise_slight_right));
+
+                nextNavigationGuide = "Rẽ chếch phải khỏi vòng xoay";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.roundabout_anticlockwise_slight_right));
                 break;
             case "roundaboutleft":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.roundabout_anticlockwise_slight_left));
+
+                nextNavigationGuide = "Rẽ chếch trái khỏi vòng xoay";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.roundabout_anticlockwise_slight_left));
                 break;
             case "arrivestraight":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.arrive_straight));
+
+                nextNavigationGuide = "Đích đến phía trước";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.arrive_straight));
                 break;
             case "arriveleft":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.arrive_left));
+
+                nextNavigationGuide = "Đích đến bên trái";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.arrive_left));
                 break;
             case "arriveright":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.arrive_right));
+
+                nextNavigationGuide = "Đích đến bên phải";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.arrive_right));
                 break;
             case "end of roadright":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.end_of_road_right));
+
+                nextNavigationGuide = "Rẽ phải ở cuối đường";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.end_of_road_right));
                 break;
             case "end of roadleft":
-                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources().getDrawable(R.drawable.end_of_road_left));
+
+                nextNavigationGuide = "Rẽ trái ở cuối đường";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.end_of_road_left));
+                break;
+            case "rotaryright":
+
+                nextNavigationGuide = "Đi vào vòng xoay";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.roundabout_anticlockwise_sharp_right));
+                break;
+            case "rotaryleft":
+
+                nextNavigationGuide = "Đi vào vòng xoay";
+                ((ImageView) findViewById(R.id.maneuverInstruction)).setImageDrawable(getResources()
+                        .getDrawable(R.drawable.roundabout_anticlockwise_sharp_left));
                 break;
             default:
                 return;
@@ -487,6 +725,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         isNavigationRunning = true;
         changeNavigationActionState(true);
         launchNavigationFab.hide();
+        vietMapSearchBar.setVisibility(View.GONE);
         navigationView.setVisibility(View.VISIBLE);
 
         sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -502,7 +741,8 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     public void userOffRoute(Location location) {
         if (isArrived) return;
         reRoute = true;
-        fetchRoute(Point.fromLngLat(location.getLongitude(), location.getLatitude()), destination);
+        origin = Point.fromLngLat(location.getLongitude(), location.getLatitude());
+        fetchRouteWithBearing(origin, destination);
     }
 
     @Override
@@ -594,6 +834,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     public void onStop() {
         super.onStop();
         navigationView.setVisibility(View.VISIBLE);
+        vietMapSearchBar.setVisibility(View.VISIBLE);
         navigationView.onStop();
         mapView.onStop();
     }
@@ -630,16 +871,10 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     void changeNavigationActionState(boolean isNavigationRunning) {
-
-
         if (!isNavigationRunning) {
-            overViewRouteButton.setVisibility(View.GONE);
             recenterButton.setVisibility(View.VISIBLE);
-            stopNavigation.setVisibility(View.GONE);
         } else {
-            overViewRouteButton.setVisibility(View.VISIBLE);
             recenterButton.setVisibility(View.GONE);
-            stopNavigation.setVisibility(View.VISIBLE);
         }
     }
 
@@ -651,11 +886,10 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     @Override
     public boolean onMapLongClick(@NonNull LatLng latLng) {
-
-        getCurrentLocation();
+        getCurrentLocation(true, true);
         destination = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
         if (origin != null) {
-            fetchRoute(origin, destination);
+            fetchRouteWithBearing(origin, destination);
         }
         return false;
     }
@@ -678,7 +912,6 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
     @Override
     public void onNavigationReady(boolean b) {
-
         isNavigationRunning = b;
     }
 

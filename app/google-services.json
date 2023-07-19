@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "420491090233",
+    "project_id": "navigation-demo-193bc",
+    "storage_bucket": "navigation-demo-193bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:420491090233:android:b87244570b30b1ccd270e8",
+        "android_client_info": {
+          "package_name": "vn.vietmap.viet_navigation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "420491090233-ncv7vkpi4t6rfjjpavh1voelt9l57jbk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH-VmB6IpiBkgwHFSrqXx1kMApTo6auCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "420491090233-ncv7vkpi4t6rfjjpavh1voelt9l57jbk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
