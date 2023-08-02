@@ -40,41 +40,41 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.mapbox.android.gestures.MoveGestureDetector;
+import vn.vietmap.android.gestures.MoveGestureDetector;
 import com.mapbox.api.directions.v5.models.BannerInstructions;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraUpdate;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
-import com.mapbox.mapboxsdk.location.LocationComponent;
-import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.engine.LocationEngine;
-import com.mapbox.mapboxsdk.location.modes.CameraMode;
-import com.mapbox.mapboxsdk.location.modes.RenderMode;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.mapbox.services.android.navigation.ui.v5.NavigationPresenter;
-import com.mapbox.services.android.navigation.ui.v5.NavigationView;
-import com.mapbox.services.android.navigation.ui.v5.NavigationViewOptions;
-import com.mapbox.services.android.navigation.ui.v5.OnNavigationReadyCallback;
-import com.mapbox.services.android.navigation.ui.v5.listeners.NavigationListener;
-import com.mapbox.services.android.navigation.ui.v5.listeners.RouteListener;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
-import com.mapbox.services.android.navigation.ui.v5.route.OnRouteSelectionChangeListener;
-import com.mapbox.services.android.navigation.v5.location.engine.LocationEngineProvider;
-import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigation;
-import com.mapbox.services.android.navigation.v5.navigation.MapboxNavigationOptions;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationEventListener;
-import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-import com.mapbox.services.android.navigation.v5.offroute.OffRouteListener;
-import com.mapbox.services.android.navigation.v5.routeprogress.ProgressChangeListener;
-import com.mapbox.services.android.navigation.v5.routeprogress.RouteProgress;
+import vn.vietmap.vietmapsdk.Vietmap;
+import vn.vietmap.vietmapsdk.camera.CameraUpdate;
+import vn.vietmap.vietmapsdk.camera.CameraUpdateFactory;
+import vn.vietmap.vietmapsdk.geometry.LatLng;
+import vn.vietmap.vietmapsdk.geometry.LatLngBounds;
+import vn.vietmap.vietmapsdk.location.LocationComponent;
+import vn.vietmap.vietmapsdk.location.LocationComponentActivationOptions;
+import vn.vietmap.vietmapsdk.location.engine.LocationEngine;
+import vn.vietmap.vietmapsdk.location.modes.CameraMode;
+import vn.vietmap.vietmapsdk.location.modes.RenderMode;
+import vn.vietmap.vietmapsdk.maps.MapView;
+import vn.vietmap.vietmapsdk.maps.VietMapGL;
+import vn.vietmap.vietmapsdk.maps.OnMapReadyCallback;
+import vn.vietmap.vietmapsdk.maps.Style;
+import vn.vietmap.services.android.navigation.ui.v5.NavigationPresenter;
+import vn.vietmap.services.android.navigation.ui.v5.NavigationView;
+import vn.vietmap.services.android.navigation.ui.v5.NavigationViewOptions;
+import vn.vietmap.services.android.navigation.ui.v5.OnNavigationReadyCallback;
+import vn.vietmap.services.android.navigation.ui.v5.listeners.NavigationListener;
+import vn.vietmap.services.android.navigation.ui.v5.listeners.RouteListener;
+import vn.vietmap.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import vn.vietmap.services.android.navigation.ui.v5.route.OnRouteSelectionChangeListener;
+import vn.vietmap.services.android.navigation.v5.location.engine.LocationEngineProvider;
+import vn.vietmap.services.android.navigation.v5.navigation.VietmapNavigation;
+import vn.vietmap.services.android.navigation.v5.navigation.VietmapNavigationOptions;
+import vn.vietmap.services.android.navigation.v5.navigation.NavigationEventListener;
+import vn.vietmap.services.android.navigation.v5.navigation.NavigationRoute;
+import vn.vietmap.services.android.navigation.v5.offroute.OffRouteListener;
+import vn.vietmap.services.android.navigation.v5.routeprogress.ProgressChangeListener;
+import vn.vietmap.services.android.navigation.v5.routeprogress.RouteProgress;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -88,7 +88,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class VietMapNavigationActivity extends AppCompatActivity implements OnNavigationReadyCallback, ProgressChangeListener, NavigationListener, Callback<DirectionsResponse>, OnMapReadyCallback, MapboxMap.OnMapClickListener, MapboxMap.OnMapLongClickListener, MapboxMap.OnMoveListener, OnRouteSelectionChangeListener, OffRouteListener, RouteListener, NavigationEventListener {
+public class VietMapNavigationActivity extends AppCompatActivity
+        implements OnNavigationReadyCallback, ProgressChangeListener,
+        NavigationListener, Callback<DirectionsResponse>, OnMapReadyCallback,
+        VietMapGL.OnMapClickListener, VietMapGL.OnMapLongClickListener,
+        VietMapGL.OnMoveListener, OnRouteSelectionChangeListener,
+        OffRouteListener, RouteListener, NavigationEventListener {
     private static final int DEFAULT_CAMERA_ZOOM = 18;
     private ConstraintLayout customUINavigation;
     private NavigationView navigationView;
@@ -99,10 +104,10 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     private Point destination = Point.fromLngLat(106.686777, 10.775056);
     private DirectionsRoute route;
     private boolean isNavigationRunning;
-    private MapboxNavigation mapboxNavigation;
+    private VietmapNavigation mapboxNavigation;
     private LocationEngine locationEngine;
     private NavigationMapRoute mapRoute;
-    private MapboxMap mapboxMap;
+    private VietMapGL vietmapGL;
     private ConstraintSet navigationMapConstraint;
     private ConstraintSet navigationMapExpandedConstraint;
     private boolean[] constraintChanged;
@@ -223,7 +228,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getSupportActionBar().hide();
-        Mapbox.getInstance(this);
+        Vietmap.getInstance(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_viet_map_navigation);
 
@@ -232,9 +237,9 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
             customNotification.createNotificationChannel(this);
         }
         muteButton = findViewById(R.id.mute);
-        MapboxNavigationOptions options = MapboxNavigationOptions.builder()
+        VietmapNavigationOptions options = VietmapNavigationOptions.builder()
                 .navigationNotification(customNotification).build();
-        mapboxNavigation = new MapboxNavigation(this, options);
+        mapboxNavigation = new VietmapNavigation(this, options);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         initializeViews(savedInstanceState);
         navigationView.initialize(this);
@@ -247,13 +252,10 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
         navigationView.initViewConfig(true);
         NavigationPresenter navigationPresenter = navigationView.getNavigationPresenter();
         muteButton.setOnClickListener(v->{
-            System.out.println("--------------------------muted click");
             if(navigationView.navigationViewModel.speechPlayer.isMuted()){
-                System.out.println("--------------------------muted");
                 navigationView.navigationViewModel.speechPlayer.setMuted(false);
                 muteButton.setImageDrawable(getResources().getDrawable( R.drawable.volume_up_24px_rounded));
             }else{
-                System.out.println("--------------------------unmuted");
                 muteButton.setImageDrawable(getResources().getDrawable( R.drawable.volume_off_24px_rounded));
                 navigationView.navigationViewModel.speechPlayer.setMuted(true);
             }
@@ -308,7 +310,6 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
             @Override
             public void onSearchAction(String currentQuery) {
-                System.out.println(currentQuery);
                 searchAddress(currentQuery);
             }
         });
@@ -340,9 +341,9 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     private void initMapRoute() {
-        mapRoute = new NavigationMapRoute(mapView, mapboxMap);
+        mapRoute = new NavigationMapRoute(mapView, vietmapGL);
         mapRoute.setOnRouteSelectionChangeListener(this);
-        mapRoute.addProgressChangeListener(new MapboxNavigation(this));
+        mapRoute.addProgressChangeListener(new VietmapNavigation(this));
     }
 
     private void initializeViews(@Nullable Bundle savedInstanceState) {
@@ -374,16 +375,16 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     @Override
-    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/06602373-c116-41cc-9af6-1ce0dc7807ae"), style -> {
+    public void onMapReady(@NonNull VietMapGL vietmapGL) {
+        this.vietmapGL = vietmapGL;
+        vietmapGL.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/961aaa3a-f380-46be-9159-09cc985d9326"), style -> {
             initLocationEngine();
             getCurrentLocation(true, false);
             enableLocationComponent(style);
             initMapRoute();
         });
-        this.mapboxMap.addOnMapClickListener(this);
-        this.mapboxMap.addOnMapLongClickListener(this);
+        this.vietmapGL.addOnMapClickListener(this);
+        this.vietmapGL.addOnMapLongClickListener(this);
         Toast.makeText(this, "Nhấn giữ trên bản đồ hoặc tìm kiếm địa điểm để bắt đầu dẫn đường", Toast.LENGTH_LONG).show();
     }
 
@@ -428,7 +429,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     private void enableLocationComponent(Style style) {
-        locationComponent = mapboxMap.getLocationComponent();
+        locationComponent = vietmapGL.getLocationComponent();
 
         if (locationComponent != null) {
             locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, style).build());
@@ -578,7 +579,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
 
                 LatLngBounds bounds = boundsBuilder.build();
                 CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
-                mapboxMap.easeCamera(cameraUpdate, 800);
+                vietmapGL.easeCamera(cameraUpdate, 800);
                 launchNavigationFab.show();
                 route = response.body().routes().get(0);
                 mapRoute.addRoutes(response.body().routes());
@@ -591,7 +592,7 @@ public class VietMapNavigationActivity extends AppCompatActivity implements OnNa
     }
 
     void initNavigationOptions() {
-        MapboxNavigationOptions navigationOptions = MapboxNavigationOptions.builder()
+        VietmapNavigationOptions navigationOptions = VietmapNavigationOptions.builder()
                 .maximumDistanceOffRoute(10)
                 .build();
         mapviewNavigationOptions = NavigationViewOptions

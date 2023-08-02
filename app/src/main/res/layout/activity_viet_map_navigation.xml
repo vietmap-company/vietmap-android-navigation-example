@@ -8,24 +8,24 @@
 
 
 
-    <com.mapbox.mapboxsdk.maps.MapView
+    <vn.vietmap.vietmapsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:maplibre_cameraZoom="17"
+        app:vietmap_cameraZoom="17"
 
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHeight_percent="1"/>
 
 
-    <com.mapbox.services.android.navigation.ui.v5.NavigationView
+    <vn.vietmap.services.android.navigation.ui.v5.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="invisible"
         app:layout_constraintTop_creator="@android:integer/config_mediumAnimTime"
-        app:maplibre_cameraZoom="18"
+        app:vietmap_cameraZoom="18"
         app:layout_constraintHeight_percent="0.001"
         app:layout_constraintTop_toTopOf="@id/mapView"
         app:navigationDarkTheme="@style/NavigationViewDark"

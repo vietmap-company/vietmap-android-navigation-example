@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import vn.vietmap.viet_navigation.R;
-import com.mapbox.mapboxsdk.location.permissions.PermissionsListener;
-import com.mapbox.mapboxsdk.location.permissions.PermissionsManager;
+import vn.vietmap.vietmapsdk.location.permissions.PermissionsListener;
+import vn.vietmap.vietmapsdk.location.permissions.PermissionsManager;
 
 import java.util.List;
 import java.util.Locale;

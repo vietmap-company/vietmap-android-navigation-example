@@ -25,13 +25,13 @@
     implementation "com.google.android.gms:play-services-location:21.0.1"
     implementation "com.jakewharton:butterknife:10.2.3"
     implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'com.github.vietmap-company:maps-sdk-android:1.0.3'
-    implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:1.1.0'
-    implementation 'com.github.vietmap-company:maps-sdk-navigation-android:1.1.0'
+    implementation 'com.github.vietmap-company:maps-sdk-android:2.0.0'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-ui-android:2.0.2'
+    implementation 'com.github.vietmap-company:maps-sdk-navigation-android:2.0.1'
     implementation 'com.github.vietmap-company:vietmap-services-core:1.0.0'
     implementation 'com.github.vietmap-company:vietmap-services-directions-models:1.0.1'
     implementation 'com.github.vietmap-company:vietmap-services-turf-android:1.0.2'
-    implementation 'com.github.vietmap-company:vietmap-services-android:1.1.1'
+    implementation 'com.github.vietmap-company:vietmap-services-android:1.1.2'
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'com.github.vietmap-company:vietmap-services-geojson-android:1.0.0'
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
@@ -89,76 +89,82 @@ Tạo file **styles.xml** tại thư mục **res/values** và thêm đoạn code
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<style name="CustomNavigationMapRoute" parent="NavigationMapRoute">
-    <item name="upcomingManeuverArrowBorderColor">@color/red</item>
-</style>
+    <style name="CustomNavigationMapRoute" parent="NavigationMapRoute">
+        <item name="upcomingManeuverArrowBorderColor">@color/red</item>
+    </style>
 
-<style name="CustomNavigationView" parent="NavigationViewLight">
-    <item name="navigationViewRouteStyle">@style/CustomNavigationMapRoute</item>
-</style>
+    <style name="CustomNavigationView" parent="NavigationViewLight">
+        <item name="navigationViewRouteStyle">@style/CustomNavigationMapRoute</item>
+    </style>
 
-<style name="customInstructionView">
-    <item name="navigationViewLocationLayerStyle">@style/NavigationLocationLayerStyle</item>
-    <item name="navigationViewRouteOverviewDrawable">@drawable/ic_route_preview</item>
-</style>
+    <style name="customInstructionView">
+        <item name="navigationViewLocationLayerStyle">@style/NavigationLocationLayerStyle</item>
+        <item name="navigationViewRouteOverviewDrawable">@drawable/ic_route_preview</item>
+    </style>
 
-<style name="CustomInstructionView" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="navigationViewPrimary">@color/mapbox_navigation_view_color_primary</item>
-    <item name="navigationViewSecondary">@color/mapbox_navigation_view_color_secondary</item>
-    <item name="navigationViewAccent">@color/mapbox_navigation_view_color_accent</item>
-    <item name="navigationViewPrimaryText">@color/mapbox_navigation_view_color_secondary</item>
-    <item name="navigationViewSecondaryText">@color/mapbox_navigation_view_color_accent_text</item>
-    <item name="navigationViewDivider">@color/mapbox_navigation_view_color_divider</item>
+    <style name="CustomInstructionView" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="navigationViewPrimary">@color/vietmap_navigation_view_color_primary</item>
+        <item name="navigationViewSecondary">@color/vietmap_navigation_view_color_secondary</item>
+        <item name="navigationViewAccent">@color/vietmap_navigation_view_color_accent</item>
+        <item name="navigationViewPrimaryText">@color/vietmap_navigation_view_color_secondary</item>
+        <item name="navigationViewSecondaryText">@color/vietmap_navigation_view_color_accent_text</item>
+        <item name="navigationViewDivider">@color/vietmap_navigation_view_color_divider</item>
 
-    <item name="navigationViewListBackground">@color/mapbox_navigation_view_color_list_background</item>
+        <item name="navigationViewListBackground">@color/vietmap_navigation_view_color_list_background</item>
 
-    <item name="navigationViewBannerBackground">@color/mapbox_navigation_view_color_banner_background</item>
-    <item name="navigationViewBannerPrimaryText">@color/mapbox_navigation_view_color_banner_primary_text</item>
-    <item name="navigationViewBannerSecondaryText">@color/mapbox_navigation_view_color_banner_secondary_text</item>
-    <item name="navigationViewBannerManeuverPrimary">@color/mapbox_navigation_view_color_banner_maneuver_primary</item>
-    <item name="navigationViewBannerManeuverSecondary">@color/mapbox_navigation_view_color_banner_maneuver_secondary</item>
+        <item name="navigationViewBannerBackground">@color/vietmap_navigation_view_color_banner_background</item>
+        <item name="navigationViewBannerPrimaryText">@color/vietmap_navigation_view_color_banner_primary_text</item>
+        <item name="navigationViewBannerSecondaryText">@color/vietmap_navigation_view_color_banner_secondary_text</item>
+        <item name="navigationViewBannerManeuverPrimary">@color/vietmap_navigation_view_color_banner_maneuver_primary</item>
+        <item name="navigationViewBannerManeuverSecondary">@color/vietmap_navigation_view_color_banner_maneuver_secondary</item>
 
-    <item name="navigationViewProgress">@color/mapbox_navigation_view_color_progress</item>
-    <item name="navigationViewProgressBackground">@color/mapbox_navigation_view_color_progress_background</item>
+        <item name="navigationViewProgress">@color/vietmap_navigation_view_color_progress</item>
+        <item name="navigationViewProgressBackground">@color/vietmap_navigation_view_color_progress_background</item>
 
-    <item name="navigationViewRouteStyle">@style/NavigationMapRoute</item>
+        <item name="navigationViewRouteStyle">@style/NavigationMapRoute</item>
 
-    <item name="navigationViewLocationLayerStyle">@style/mapbox_LocationLayer</item>
+        <item name="navigationViewLocationLayerStyle">@style/mapbox_LocationLayer</item>
 
-    <item name="navigationViewDestinationMarker">@drawable/map_marker_light</item>
+        <item name="navigationViewDestinationMarker">@drawable/map_marker_light</item>
 
-    <item name="navigationViewRouteOverviewDrawable">@drawable/ic_route_preview</item>
+        <item name="navigationViewRouteOverviewDrawable">@drawable/ic_route_preview</item>
 
-    <item name="navigationViewMapStyle">@string/navigation_guidance_day</item>
-</style>
+        <item name="navigationViewMapStyle">@string/navigation_guidance_day</item>
+    </style>
 
-<!-- Base application theme. -->
-<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    <!-- Customize your theme here. -->
-    <item name="colorPrimary">@color/colorPrimary</item>
-    <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-    <item name="colorAccent">@color/colorAccent</item>
-</style>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
 
-<style name="TestNavigationViewDark" parent="NavigationViewDark">
-    <!-- Map style URL -->
-    <item name="navigationViewMapStyle">
-        YOUR STYLE URL HERE
-    </item>
-</style>
+    <style name="TestNavigationViewDark" parent="NavigationViewDark">
+        <!-- Map style URL -->
+        <item name="navigationViewMapStyle">
+            YOUR STYLE URL HERE
+        </item>
+    </style>
 
-<style name="TestNavigationViewLight" parent="NavigationViewLight">
-    <!-- Map style URL -->
-    <item name="navigationViewMapStyle">
-        YOUR STYLE URL HERE
-    </item>
-</style>
+    <style name="TestNavigationViewLight" parent="NavigationViewLight">
+        <!-- Map style URL -->
+        <item name="navigationViewMapStyle">
+            YOUR STYLE URL HERE
+        </item>
+    </style>
+
+    <style name="progressBarBlue" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">@color/blue</item>
+    </style>
 </resources>
 
 ```
 Thêm đoạn code sau vào file **string.xml**
 
 ```xml
+<resources>
+    <string name="app_name">Dẫn đường VietMap</string>
 
     <string name="title_mock_navigation">Giả bộ Điều hướng</string>
     <string name="description_mock_navigation">Giả bộ phiên điều hướng dùng máy định vị giả.</string>
@@ -205,8 +211,8 @@ Thêm đoạn code sau vào file **string.xml**
     <string name="description_navigation_ui">Showcase a Navigation UI session. Optional with simulation.</string>
 
 
-    <string name="title_component_navigation">MapboxNavigation with UI components</string>
-    <string name="description_component_navigation">MapboxNavigation with UI components</string>
+    <string name="title_component_navigation">VietMapNavigation with UI components</string>
+    <string name="description_component_navigation">VietMapNavigation with UI components</string>
 
     <string name="unit_type_key" translatable="false">unit_type</string>
     <string name="simulate_route_key" translatable="false">simulate_route</string>
@@ -221,7 +227,9 @@ Thêm đoạn code sau vào file **string.xml**
 
     <string name="user_location_permission_explanation">Ứng dụng này cần sử dụng quyền vị trí để hoạt động chính xác.</string>
     <string name="user_location_permission_not_granted">Bạn chưa cung cấp quyền vị trí.</string>
+    <string name="tts_guide">Nếu ứng dụng không phát âm dẫn đường, vui lòng nhấn nút cài đặt dưới đây và lựa chọn công cụ chuyển văn bản thành giọng nói về Google rồi thử lại.</string>
 
+</resources>
 ```
 
 ### **Lưu ý: Cần thêm styleUrl vào vị trí _*YOUR_STYLE_URL_HERE*_ cho key map_view_style_url để chạy navigation**
@@ -243,7 +251,7 @@ Tại file **xml** của **activity**, thêm đoạn code như sau
     android:layout_height="match_parent"
     android:id="@+id/vietmapNavigation">
 
-    <com.mapbox.services.android.navigation.ui.v5.NavigationView
+    <vn.vietmap.services.android.navigation.ui.v5.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -254,7 +262,7 @@ Tại file **xml** của **activity**, thêm đoạn code như sau
         app:navigationDarkTheme="@style/NavigationViewDark"
         app:navigationLightTheme="@style/NavigationViewLight"/>
 
-    <com.mapbox.mapboxsdk.maps.MapView
+    <vn.vietmap.vietmapsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -297,23 +305,18 @@ Activity cần implements một số class Listener dưới đây để hứng e
 
 
 ```java
-public class VietMapNavigationMapActivity extends AppCompatActivity implements 
-        OnNavigationReadyCallback,
-        ProgressChangeListener,
-        NavigationListener,
-        Callback<DirectionsResponse>,
-        OnMapReadyCallback,
-        MapboxMap.OnMapClickListener,
-        MapboxMap.OnMapLongClickListener,
-        MapboxMap.OnMoveListener,
-        OnRouteSelectionChangeListener,
-        OffRouteListener, 
-        RouteListener, NavigationEventListener 
+public class VietMapNavigationActivity extends AppCompatActivity
+        implements OnNavigationReadyCallback,
+        ProgressChangeListener, OnMapReadyCallback,
+        NavigationListener, Callback<DirectionsResponse>, 
+        VietMapGL.OnMapClickListener, VietMapGL.OnMapLongClickListener,
+        VietMapGL.OnMoveListener, OnRouteSelectionChangeListener,
+        OffRouteListener, RouteListener, NavigationEventListener
 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //Hàm Mapbox.getInstance cần được gọi ngay khi khởi tạo activity
-        Mapbox.getInstance(this);
+        //Hàm Vietmap.getInstance cần được gọi ngay khi khởi tạo activity
+        Vietmap.getInstance(this);
         super.onCreate(savedInstanceState);
     }
 }
@@ -327,7 +330,7 @@ public class VietMapNavigationMapActivity extends AppCompatActivity implements
 >       - onNavigationRunning: Lắng nghe khi người dùng đang di chuyển
 >   - Callback(DirectionsResponse): Trả về kết quả khi getRoute hoàn thành
 >   - OnMapReadyCallback: Lắng nghe khi map init hoàn thành và gán style cho map
->   - MapboxMap.OnMapClickListener,MapboxMap.OnMapLongClickListener, MapboxMap.OnMoveListener: Lắng nghe các sự kiện của map
+>   - VietMapGL.OnMapClickListener,VietMapGL.OnMapLongClickListener, VietMapGL.OnMoveListener: Lắng nghe các sự kiện của map
 >   - OnRouteSelectionChangeListener(DirectionsRoute newRouteSelected):
       >       - onNewPrimaryRouteSelected: Lắng nghe khi người dùng chọn tuyến đường khác so với tuyến đường hiện tại, trả về đường đi mới người dùng chọn
 >   - OffRouteListener: Lắng nghe khi người dùng đi sai tuyến đường, từ đó tìm tuyến khác theo hướng di chuyển của người dùng
@@ -338,7 +341,7 @@ public class VietMapNavigationMapActivity extends AppCompatActivity implements
 Khai báo các biến cần thiết
 
 ```java
-    private static final int DEFAULT_CAMERA_ZOOM = 20;
+    private static final int DEFAULT_CAMERA_ZOOM = 18;
     private ConstraintLayout customUINavigation;
     private NavigationView navigationView;
     private MapView mapView;
@@ -348,10 +351,10 @@ Khai báo các biến cần thiết
     private Point destination = Point.fromLngLat(106.686777, 10.775056);
     private DirectionsRoute route;
     private boolean isNavigationRunning;
-    private MapboxNavigation mapboxNavigation;
+    private VietmapNavigation vietmapNavigation;
     private LocationEngine locationEngine;
     private NavigationMapRoute mapRoute;
-    private MapboxMap mapboxMap;
+    private VietMapGL vietmapGL;
     private ConstraintSet navigationMapConstraint;
     private ConstraintSet navigationMapExpandedConstraint;
     private boolean[] constraintChanged;
@@ -361,7 +364,7 @@ Khai báo các biến cần thiết
     private int BEGIN_ROUTE_MILESTONE = 1001;
     private boolean reRoute = false;
     private boolean isArrived = false;
-    private NavigationViewOptions.Builder mapviewNavigationOptions;
+    private NavigationViewOptions.Builder mapviewNavigationOptions; 
 ```
 Tại hàm **onCreate**, bắt đầu khởi tạo màn hình dẫn đường
 ```java
@@ -373,10 +376,9 @@ Tại hàm **onCreate**, bắt đầu khởi tạo màn hình dẫn đường
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             customNotification.createNotificationChannel(this);
         }
-        MapboxNavigationOptions options = MapboxNavigationOptions.builder()
-                .navigationNotification(customNotification)
-                .build();
-        mapboxNavigation = new MapboxNavigation(this, options);
+        VietmapNavigationOptions options = VietmapNavigationOptions.builder()
+                .navigationNotification(customNotification).build();
+        vietmapNavigation = new VietmapNavigation(this, options);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         initializeViews(savedInstanceState);
         navigationView.initialize(this);
@@ -408,15 +410,15 @@ Hàm **initializeViews**
 ### Tại hàm **onMapReady**:
 ```java
     @Override
-    public void onMapReady(@NonNull MapboxMap mapboxMap) {
-        this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(new Style.Builder().fromUri(YOUR_STYLE_URL_HERE), style -> {
+    public void onMapReady(@NonNull VietMapGL vietmapGL) {
+        this.vietmapGL = vietmapGL;
+        vietmapGL.setStyle(new Style.Builder().fromUri(YOUR_STYLE_URL_HERE), style -> {
             initLocationEngine();
             getCurrentLocation();
             enableLocationComponent(style);
             initMapRoute();
         });
-        this.mapboxMap.addOnMapClickListener(this);
+        this.vietmapGL.addOnMapClickListener(this);
     }
 ```
 ```java
@@ -437,12 +439,10 @@ Hàm **initializeViews**
     }
 
     private void initMapRoute() {
-
-        mapRoute = new NavigationMapRoute(mapView, mapboxMap);
+        mapRoute = new NavigationMapRoute(mapView, vietmapGL);
         mapRoute.setOnRouteSelectionChangeListener(this);
-        mapRoute.addProgressChangeListener(new MapboxNavigation(this));
+        mapRoute.addProgressChangeListener(new VietmapNavigation(this));
     }
-
 
     private void getCurrentLocation() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -455,13 +455,12 @@ Hàm **initializeViews**
             return;
         }
     }
+
     private void enableLocationComponent(Style style) {
-        locationComponent = mapboxMap.getLocationComponent();
+        locationComponent = vietmapGL.getLocationComponent();
 
         if (locationComponent != null) {
-            locationComponent.activateLocationComponent(
-                    LocationComponentActivationOptions.builder(this, style).build()
-            );
+            locationComponent.activateLocationComponent(LocationComponentActivationOptions.builder(this, style).build());
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -485,23 +484,23 @@ Tạo **_layout xml_** _vietmap_navigation_expand_
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.mapbox.services.android.navigation.ui.v5.NavigationView
+
+    <vn.vietmap.services.android.navigation.ui.v5.NavigationView
         android:id="@+id/navigationView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="visible"
-        app:maplibre_cameraZoom="15"
+        app:vietmap_cameraZoom="15"
         app:layout_constraintHeight_percent="1"
         app:layout_constraintTop_toTopOf="@+id/vietmapNavigationExpand"
         app:layout_constraintBottom_toBottomOf="@+id/vietmapNavigationExpand"
         app:navigationDarkTheme="@style/NavigationViewDark"
         app:navigationLightTheme="@style/NavigationViewLight"/>
-
-    <com.mapbox.mapboxsdk.maps.MapView
+    <vn.vietmap.vietmapsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:maplibre_cameraZoom="15"
+        app:vietmap_cameraZoom="15"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/vietmapNavigationExpand"
         app:layout_constraintHeight_percent="0"/>
@@ -550,10 +549,9 @@ Hàm **expandCollapse**:
 ```
 Hàm **stopNavigationFunction**
 ```java
-
-    void stopNavigationFunction(){
+    void stopNavigationFunction() {
         navigationView.stopNavigation();
-        mapboxNavigation.stopNavigation();
+        vietmapNavigation.stopNavigation();
         launchNavigationFab.show();
     }
 ```
@@ -573,10 +571,8 @@ Hàm override **onRunning** và **onNavigationReady** (Lắng nghe trạng thái
         isNavigationRunning = b;
     }
 
-
     @Override
     public void onNavigationReady(boolean b) {
-
         isNavigationRunning = b;
     }
 ```
@@ -589,6 +585,7 @@ Hàm override **onNewPrimaryRouteSelected** (Lắng nghe khi người dùng ch�
 ```
 Tạo class **CustomNavigationNotification** để bắn thông báo trên từng tuyến đường cho người dùng
 ```java
+
 public class CustomNavigationNotification implements NavigationNotification {
 
     private static final int CUSTOM_NOTIFICATION_ID = 91234821;
@@ -666,30 +663,31 @@ Ví dụ:
 ```
 ### Từ hai điểm **_point_** và **_destination_** này, chúng ta có thể gọi hàm **fetchRoute** như sau:
 ```java
-private void fetchRoute(Point origin, Point destination) {
-        NavigationRoute builder = NavigationRoute.builder(this)
-                .apikey("YOUR_ACCESS_TOKEN_HERE")
-                .origin(origin)
-                .destination(destination)
-                .alternatives(true)
-                .build();
-        builder.getRoute(this);
+    private void fetchRoute(Point origin, Point destination, @Nullable Double bearing) {
+        NavigationRoute.Builder builder = NavigationRoute
+                .builder(this)
+                .apikey(YOUR_VIETMAP_APIKEY_HERE)
+                .origin(origin, bearing, bearing)
+                .destination(destination, bearing, bearing);
+        
+        builder.build().getRoute(this);
     }
 ```
 Sau khi gọi hàm **fetchRoute**, bạn sẽ nhận được kết quả tại listener như sau:
 ```java
     @Override
     public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+
         if (validRouteResponse(response)) {
             if (reRoute) {
                 route = response.body().routes().get(0);
                 initNavigationOptions();
                 navigationView.updateCameraRouteOverview();
-                mapboxNavigation.addNavigationEventListener(this);
-                mapboxNavigation.startNavigation(route);
+                vietmapNavigation.addNavigationEventListener(this);
+                vietmapNavigation.startNavigation(route);
                 navigationView.startNavigation(this.mapviewNavigationOptions.build());
                 reRoute = false;
-                isArrived=false;
+                isArrived = false;
             } else {
                 launchNavigationFab.show();
                 route = response.body().routes().get(0);
@@ -704,11 +702,12 @@ Sau khi gọi hàm **fetchRoute**, bạn sẽ nhận được kết quả tại 
 ### **V**. Start Navigation
 Sau khi gọi được tuyến đường, tiếp theo cần cấu hình một số tuỳ chọn để bắt đầu dẫn đường
 ```java
-void initNavigationOptions(){
-        MapboxNavigationOptions navigationOptions = MapboxNavigationOptions.builder()
+    void initNavigationOptions() {
+        VietmapNavigationOptions navigationOptions = VietmapNavigationOptions.builder()
                 .build();
-        mapviewNavigationOptions =NavigationViewOptions.builder()
-                .navigationListener(this)
+
+        mapviewNavigationOptions = NavigationViewOptions
+                .builder().navigationListener(this)
                 .routeListener(this)
                 .navigationOptions(navigationOptions)
                 .locationEngine(locationEngine)
@@ -734,17 +733,17 @@ Hàm **initNavigationOptions** sẽ được gọi trước khi bắt đầu d�
     private void launchNavigation() {
         launchNavigationFab.hide();
         navigationView.setVisibility(View.VISIBLE);
-        mapboxNavigation.addOffRouteListener(this);
+        vietmapNavigation.addOffRouteListener(this);
         initNavigationOptions();
-        mapboxNavigation.startNavigation(route);
+        vietmapNavigation.startNavigation(route);
         navigationView.startNavigation(this.mapviewNavigationOptions.build());
-        isArrived=false;
+        isArrived = false;
     }
 ```
 Hàm **launchNavigation** được gọi tại một button bất kì tuỳ theo người dùng khai báo
 
 Tại hàm **launchNavigation**, có hai hàm **startNavigation** được khởi chạy:
--   Hàm của **mapboxNavigation** tương tự một controller để lắng nghe các trạng thái của chuyến đi và trả về toàn bộ các thông tin của chuyến đi.
+-   Hàm của **vietmapNavigation** tương tự một controller để lắng nghe các trạng thái của chuyến đi và trả về toàn bộ các thông tin của chuyến đi.
 -   Hàm của **navigationView** để bắt đầu hiển thị dẫn đường lên màn hình.
 ```java
     @Override
@@ -866,19 +865,51 @@ Thêm các hàm **callbacks** sau để đảm bảo khởi tạo và quản lý
 public class MainActivity extends AppCompatActivity implements PermissionsListener {
 
     private PermissionsManager permissionsManager;
+
+    private TextToSpeech textToSpeech;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Button button =  findViewById(R.id.pushToNavigationScreen);
+        Button ttsButton = findViewById(R.id.testSpeech);
+        Button speechAgain = findViewById(R.id.speechAgain);
         Intent it = new Intent(this, VietMapNavigationActivity.class);
-        button.setOnClickListener(view -> startActivity(it));
+        button.setOnClickListener(view -> {
+            startActivity(it);
+            speechAgain.setVisibility(View.GONE);
+        });
+        speechAgain.setOnClickListener(view -> speakOut("Ngôn ngữ: Tiếng Việt"));
+        ttsButton.setOnClickListener(view-> {
+            startActivity(new Intent("com.android.settings.TTS_SETTINGS"));
+            speechAgain.setVisibility(View.VISIBLE);
+        });
         permissionsManager = new PermissionsManager(this);
         if (!PermissionsManager.areLocationPermissionsGranted(this)) {
             permissionsManager.requestLocationPermissions(this);
         }
+
+        textToSpeech = new TextToSpeech(getApplicationContext(), status -> setTextToSpeechLanguage());
     }
 
+    private void setTextToSpeechLanguage() {
+        Locale language =new Locale("vi","VN");
+        int result = textToSpeech.setLanguage(language);
+        if (result == TextToSpeech.LANG_MISSING_DATA) {
+            Toast.makeText(this, "Không có dữ liệu ngôn ngữ", Toast.LENGTH_LONG).show();
+            return;
+        } else if (result == TextToSpeech.LANG_NOT_SUPPORTED) {
+            Toast.makeText(this, "Chưa hỗ trợ ngôn ngữ "+language.getLanguage() , Toast.LENGTH_LONG).show();
+            return;
+        } else {
+            Toast.makeText(this, "Ngôn ngữ: Tiếng Việt", Toast.LENGTH_LONG).show();
+            speakOut("Ngôn ngữ: Tiếng Việt");
+        }
+    }
+    private void speakOut(String speechContent) {
+        String utteranceId = UUID.randomUUID().toString();
+        textToSpeech.speak(speechContent, TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -904,12 +935,56 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
 ```
 Tại file **activity_main.xml**, thêm layout cho button phía trên
 ```xml
+
     <Button
         android:id="@+id/pushToNavigationScreen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start to VietMapNavigationScreen"
-        tools:ignore="MissingConstraints" />
+        android:layout_marginTop="36dp"
+        android:text="Dẫn đường với VietMap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+         />
+
+    <TextView
+        android:id="@+id/guideText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginLeft="15dp"
+        android:textSize="16dp"
+        android:layout_marginRight="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/pushToNavigationScreen"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="@string/tts_guide"
+        />
+
+    <Button
+        android:id="@+id/testSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Cài đặt text to speech"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/guideText"
+        />
+
+    <Button
+        android:id="@+id/speechAgain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Nghe lại"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/testSpeech"
+        />
 ```
 # **Custom UI (Tuỳ chỉnh giao diện)**
 ```java
@@ -1011,7 +1086,7 @@ Khai báo thêm 3 button để thực hiện các thao tác như về giữa, xe
 ```java
     void stopNavigationFunction(){
         navigationView.stopNavigation();
-        mapboxNavigation.stopNavigation();
+        vietmapNavigation.stopNavigation();
         launchNavigationFab.show();
         //Thêm 3 dòng code dưới đây 
         recenterButton.setVisibility(View.GONE);
@@ -1074,7 +1149,7 @@ Chỉnh sửa hàm **stopNavigation**:
 ```java
     void stopNavigationFunction(){
         navigationView.stopNavigation();
-        mapboxNavigation.stopNavigation();
+        vietmapNavigation.stopNavigation();
         recenterButton.setVisibility(View.GONE);
         overViewRouteButton.setVisibility(View.GONE);
         stopNavigation.setVisibility(View.GONE);
