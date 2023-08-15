@@ -1,22 +1,22 @@
-# **VietMap Navigation Android SDK documentation**
-## Table of contents
-[1.  Gradle and AndroidManifest configure](/README.md#i-add-dependencies-below-to-buildgradle-module-app)
+# **Tài liệu hướng dẫn cài đặt VietMap Navigation Android SDK**
+## Mục lục
+[1. Cấu hình gradle và AndroidManifest](/README.md#i-thêm-các-dependencies-vào-buildgradle-module-app)
 
-[2. Add some configure values for project](/README.md#ii-add-some-configure-values-for-project)
+[2. Thêm các values cấu hình cho project](/README.md#ii-thêm-các-values-cấu-hình-cho-project)
 
-[3. Create a navigation activity](/README.md#iii-create-a-navigation-activity)
+[3. Tạo activity navigation để sử dụng sdk](/README.md#iii-tạo-activity-navigation-để-sử-dụng-sdk)
 
-[4. Fetch route (Find a route between two coordinates)](/README.md#iv-fetch-route-find-a-route-between-two-coordinates)
+[4. Fetch route (Tìm một tuyến đường)](/README.md#iv-tìm-một-tuyến-đường)
 
-[5. Start Navigation](/README.md#v-start-navigation)
+[5. Start Navigation (Bắt đầu dẫn đường)](/README.md#v-start-navigation)
 
-[6. Request location permission in MainActivity](/README.md#at-mainactivity-add-the-function-to-check-location-permission-and-push-to-the-navigation-activity)
+[6. Request quyền vị trí tại file MainActivity](/README.md#tại-mainactivity-thêm-hàm-kiểm-tra-quyền-vị-trí-và-button-chuyển-qua-màn-hình-dẫn-đường)
 
-[7. Custom Navigation UI ](/README.md#custom-navigaion-ui)
+[7. Custom UI (Tuỳ chỉnh giao diện)](/README.md#custom-ui-tuỳ-chỉnh-giao-diện)
 
-[8. Add apikey and styleUrl for project](/README.md#add-apikey-and-styleurl)
+[8. Thêm apikey và styleUrl](/README.md#thêm-apikey-và-styleurl)
 
-###  **I**. Add dependencies below to build.gradle module app
+###  **I**. Thêm các dependencies vào build.gradle module app
 
 ```gradle
     implementation "androidx.recyclerview:recyclerview:1.2.1"
@@ -39,7 +39,7 @@
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.0.0-beta4'
 ```
-Configure the **jitpack repository** in the **setting.gradle** file
+Cấu hình **jitpack repository** tại file **setting.gradle**
 ```gradle
 
 dependencyResolutionManagement {
@@ -47,13 +47,13 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // Add two lines below to the repositories block (In setting.gradle file)
+        // Thêm 2 dòng dưới đây vào repositories (tại file setting.gradle)
         maven { url 'https://plugins.gradle.org/m2' }
         maven { url 'https://jitpack.io' }
     }
 }
 ```
-With older projects, add to the **build.gradle file at module project**
+Đối với các project cũ, thêm vào file **build.gradle tại module project**
 ```gradle
 allprojects {
     repositories {
@@ -62,30 +62,30 @@ allprojects {
     }
 }
 ```
-Upgrade the **compileSdk** and **targetSdk** to version **_33_**
+Chuyển **compileSdk** và **targetSdk** vể version **_33_**
 ```
 compileSdk 33
 ```
 ```
 targetSdk 33
 ```
-Add the below permission request to the **AndroidManifest.xml** file
+Thêm các quyền sau vào **AndroidManifest.xml**
 ```xml
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
-### **II**. Add some configure values for project
+### **II**. Thêm các values cấu hình cho project
 
-Add below colors to **res/values/colors.xml** file
+Thêm các mã màu sau vào **res/values/colors.xml**
 ```xml
     <color name="colorPrimary">#8D64F9</color>
     <color name="colorPrimaryDark">#7845F3</color>
     <color name="colorAccent">#F56FA3</color>
     <color name="red">#FF0000</color>
 ```
-Create **styles.xml** file at **res/values** folder and add below code
+Tạo file **styles.xml** tại thư mục **res/values** và thêm đoạn code
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -160,7 +160,7 @@ Create **styles.xml** file at **res/values** folder and add below code
 </resources>
 
 ```
-Add below code to **string.xml** file
+Thêm đoạn code sau vào file **string.xml**
 
 ```xml
 <resources>
@@ -232,16 +232,16 @@ Add below code to **string.xml** file
 </resources>
 ```
 
-### **Note**: Need to add styleUrl in position _*YOUR_STYLE_URL_HERE*_ for key map_view_style_url to run navigation
+### **Lưu ý: Cần thêm styleUrl vào vị trí _*YOUR_STYLE_URL_HERE*_ cho key map_view_style_url để chạy navigation**
 
 
 
-### **III**. Create a navigation activity
+### **III**. Tạo activity navigation để sử dụng sdk
 
 
-Create new **VietMapNavigationActivity**
+Tạo một **activity** mới với tên **VietMapNavigationActivity**
 
-Add below code to **xml** file of created **activity**
+Tại file **xml** của **activity**, thêm đoạn code như sau
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -301,7 +301,7 @@ Add below code to **xml** file of created **activity**
 
 ```
 
-Activity needs to implement some of the following Listener classes to catch user events, navigation event and process them.
+Activity cần implements một số class Listener dưới đây để hứng event và xử lý trong quá trình sdk đang dẫn đường
 
 
 ```java
@@ -315,28 +315,30 @@ public class VietMapNavigationActivity extends AppCompatActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Hàm Vietmap.getInstance cần được gọi ngay khi khởi tạo activity
         Vietmap.getInstance(this);
         super.onCreate(savedInstanceState);
     }
 }
 ```
-* OnNavigationReadyCallback: Listens when the SDK starts navigation.
-* ProgressChangeListener(location, routeProgress): Continuously listens to the user's current location, current route information, next route, and remaining distance that the user needs to travel.
-* NavigationListener: Includes three functions:
- - onCancelNavigation: Listens when the user cancels the navigation.
- - onNavigationFinished: Listens when the user completes the journey.
-* onNavigationRunning: Listens when the user is actively navigating.
-* Callback(DirectionsResponse): Returns the result when the getRoute operation is completed.
-* OnMapReadyCallback: Listens when the map initialization is completed and applies the style to the map.
-* MapboxMap.OnMapClickListener, MapboxMap.OnMapLongClickListener, MapboxMap.OnMoveListener: Listen to map events such as click, long click, and move.
-* OnRouteSelectionChangeListener(DirectionsRoute newRouteSelected):
-* onNewPrimaryRouteSelected: Listens when the user selects a different route from the current route and returns the newly selected route.
-* OffRouteListener: Listens when the user deviates from the intended route and needs to find an alternative route based on the user's current location.
-* userOffRoute(Location currentLocation): Called when the user deviates from the intended route, providing the current location to find a new route.
-* RouteListener: Listens when the user arrives at the destination.
-* onArrival(): Called when the user reaches the destination.
 
-Define necessary variables
+>   - OnNavigationReadyCallback: Lắng nghe khi SDK bắt đầu dẫn đường
+>   - ProgressChangeListener(location, routeProgress):    Liên tục lắng nghe vị trí hiện tại của người dùng, thông tin tuyến đường hiện tại, tuyến đường tiếp theo, khoảng cách còn lại mà người dùng cần phải đi
+>   - NavigationListener: Bao gồm 3 function:
+      >       - onCancelNavigation: Lắng nghe khi người dùng huỷ dẫn đường
+>       - onNavigationFinished: Lắng nghe khi người dùng hoàn tất chuyến đi
+>       - onNavigationRunning: Lắng nghe khi người dùng đang di chuyển
+>   - Callback(DirectionsResponse): Trả về kết quả khi getRoute hoàn thành
+>   - OnMapReadyCallback: Lắng nghe khi map init hoàn thành và gán style cho map
+>   - VietMapGL.OnMapClickListener,VietMapGL.OnMapLongClickListener, VietMapGL.OnMoveListener: Lắng nghe các sự kiện của map
+>   - OnRouteSelectionChangeListener(DirectionsRoute newRouteSelected):
+      >       - onNewPrimaryRouteSelected: Lắng nghe khi người dùng chọn tuyến đường khác so với tuyến đường hiện tại, trả về đường đi mới người dùng chọn
+>   - OffRouteListener: Lắng nghe khi người dùng đi sai tuyến đường, từ đó tìm tuyến khác theo hướng di chuyển của người dùng
+      >       - userOffRoute(Location currentLocation): Hàm được gọi khi người dùng đi sai đường đi, từ đó tìm đường đi mới dựa trên vị trí hiện tại được trả về (currentLocation)
+>   - RouteListener: Lắng nghe khi người dùng tới đích
+      >       - onArrival(): Hàm được gọi khi người dùng đi tới đích (destination)
+
+Khai báo các biến cần thiết
 
 ```java
     private static final int DEFAULT_CAMERA_ZOOM = 18;
@@ -364,10 +366,12 @@ Define necessary variables
     private boolean isArrived = false;
     private NavigationViewOptions.Builder mapviewNavigationOptions; 
 ```
-Call necessary function in **onCreate** callback
+Tại hàm **onCreate**, bắt đầu khởi tạo màn hình dẫn đường
 ```java
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Thêm đoạn code sau vào hàm onCreate
         CustomNavigationNotification customNotification = new CustomNavigationNotification(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             customNotification.createNotificationChannel(this);
@@ -385,7 +389,7 @@ Call necessary function in **onCreate** callback
         constraintChanged = new boolean[]{false};
     }
 ```
-**initializeViews** function
+Hàm **initializeViews**
 ```java
     private void initializeViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_viet_map_navigation);
@@ -403,7 +407,7 @@ Call necessary function in **onCreate** callback
         mapView.getMapAsync(this);
     }
 ```
-### In **onMapReady** callback function:
+### Tại hàm **onMapReady**:
 ```java
     @Override
     public void onMapReady(@NonNull VietMapGL vietmapGL) {
@@ -470,7 +474,7 @@ Call necessary function in **onCreate** callback
 ```
 
 
-Create **_layout xml_** named _vietmap_navigation_expand_
+Tạo **_layout xml_** _vietmap_navigation_expand_
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -529,7 +533,7 @@ Create **_layout xml_** named _vietmap_navigation_expand_
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 ```
-**expandCollapse** function:
+Hàm **expandCollapse**:
 ```java
     private void expandCollapse() {
         TransitionManager.beginDelayedTransition(customUINavigation);
@@ -543,7 +547,7 @@ Create **_layout xml_** named _vietmap_navigation_expand_
         constraintChanged[0] = !constraintChanged[0];
     }
 ```
-**stopNavigationFunction** 
+Hàm **stopNavigationFunction**
 ```java
     void stopNavigationFunction() {
         navigationView.stopNavigation();
@@ -551,7 +555,7 @@ Create **_layout xml_** named _vietmap_navigation_expand_
         launchNavigationFab.show();
     }
 ```
-**onCancelNavigation** callback (Listener when user click on cancel navigation button):
+Hàm override **onCancelNavigation** (Hàm lắng nghe khi người dùng dừng dẫn đường):
 ```java
     @Override
     public void onCancelNavigation() {
@@ -560,7 +564,7 @@ Create **_layout xml_** named _vietmap_navigation_expand_
         stopNavigationFunction();
     }
 ```
-**onRunning** and **onNavigationReady** callback:
+Hàm override **onRunning** và **onNavigationReady** (Lắng nghe trạng thái thay đổi của chuyến đi):
 ```java
     @Override
     public void onRunning(boolean b) {
@@ -572,14 +576,14 @@ Create **_layout xml_** named _vietmap_navigation_expand_
         isNavigationRunning = b;
     }
 ```
-**onNewPrimaryRouteSelected** callback (Listen when user select a new direction route):
+Hàm override **onNewPrimaryRouteSelected** (Lắng nghe khi người dùng chọn tuyến đường khác):
 ```java
     @Override
     public void onNewPrimaryRouteSelected(DirectionsRoute directionsRoute) {
         route=directionsRoute;
     }
 ```
-Create **CustomNavigationNotification** class to show notification about current routing information
+Tạo class **CustomNavigationNotification** để bắn thông báo trên từng tuyến đường cho người dùng
 ```java
 
 public class CustomNavigationNotification implements NavigationNotification {
@@ -649,15 +653,15 @@ public class CustomNavigationNotification implements NavigationNotification {
     }
 }
 ```
-### **IV**. Fetch route (Find a route between two coordinates)
-Fetch route API required two params is **_origin_** and **_destination_**, is the current position of the user and the target location.
+### **IV**. Tìm một tuyến đường
+API tìm tuyến đường yêu cầu 2 params là **_origin_** và **_destination_**, là vị trí hiện tại của người dùng và vị trí đích đến.
 
-Example:
+Ví dụ:
 ```java
     Point origin = Point.fromLngLat(106.675884,10.759197);
     Point destination = Point.fromLngLat( 105.577136, 18.932147);
 ```
-### From **_point_** and **_destination_** point, let call **fetchRoute** function as below code:
+### Từ hai điểm **_point_** và **_destination_** này, chúng ta có thể gọi hàm **fetchRoute** như sau:
 ```java
     private void fetchRoute(Point origin, Point destination, @Nullable Double bearing) {
         NavigationRoute.Builder builder = NavigationRoute
@@ -669,7 +673,7 @@ Example:
         builder.build().getRoute(this);
     }
 ```
-Handle response of **fetchRoute** function:
+Sau khi gọi hàm **fetchRoute**, bạn sẽ nhận được kết quả tại listener như sau:
 ```java
     @Override
     public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
@@ -696,7 +700,7 @@ Handle response of **fetchRoute** function:
     }
 ```
 ### **V**. Start Navigation
-After called the fetch route API, you should configure some options to start navigation
+Sau khi gọi được tuyến đường, tiếp theo cần cấu hình một số tuỳ chọn để bắt đầu dẫn đường
 ```java
     void initNavigationOptions() {
         VietmapNavigationOptions navigationOptions = VietmapNavigationOptions.builder()
@@ -713,7 +717,7 @@ After called the fetch route API, you should configure some options to start nav
                 .onMoveListener(this);
     }
 ```
-**progressChangeListener** callback function response **location** (current location of the user) and **routeProgress** (Information about the route the user is taking, the direction of the next turn, the distance to the next turn,...)
+Hàm **progressChangeListener** trả về 2 thông tin là **location** (vị trí hiện tại của người dùng) và **routeProgress** (Thông tin tuyến đường người dùng đang đi qua, hướng rẽ tiếp theo, khoảng cách,...)
 ```java
     private ProgressChangeListener progressChangeListener = (location, routeProgress) -> {
         System.out.println("Progress Changing");
@@ -724,7 +728,7 @@ After called the fetch route API, you should configure some options to start nav
         return response.body() != null && !response.body().routes().isEmpty();
     }
 ```
-**initNavigationOptions** function will be called before starting the navigation
+Hàm **initNavigationOptions** sẽ được gọi trước khi bắt đầu dẫn đường
 ```java
     private void launchNavigation() {
         launchNavigationFab.hide();
@@ -736,11 +740,11 @@ After called the fetch route API, you should configure some options to start nav
         isArrived = false;
     }
 ```
-**launchNavigation** should call inside a button
+Hàm **launchNavigation** được gọi tại một button bất kì tuỳ theo người dùng khai báo
 
-In **launchNavigation** function, there're two **startNavigation** function called:
-- **vietmapNavigation** is a controller to listen to all status and information of navigation, and return some navigation callback.
-- **navigationView** will show the UI of navigation.
+Tại hàm **launchNavigation**, có hai hàm **startNavigation** được khởi chạy:
+-   Hàm của **vietmapNavigation** tương tự một controller để lắng nghe các trạng thái của chuyến đi và trả về toàn bộ các thông tin của chuyến đi.
+-   Hàm của **navigationView** để bắt đầu hiển thị dẫn đường lên màn hình.
 ```java
     @Override
     public void userOffRoute(Location location) {
@@ -749,14 +753,14 @@ In **launchNavigation** function, there're two **startNavigation** function call
             fetchRoute(Point.fromLngLat(location.getLongitude(), location.getLatitude()), destination);
     }
 ```
-#### **userOffRoute** function return a callback when the user goes wrong with the returned route
+#### Hàm **userOffRoute** lắng nghe khi người dùng đi không đúng với lộ trình được trả về, từ đó tìm tuyến đường mới phù hợp hơn với hướng di chuyển hiện tại của người dùng
 ```java
     @Override
     public void onProgressChange(Location location, RouteProgress routeProgress) {
         
     }
 ```
-#### **onProgressChange** function listen as the user moves, continuously update information about the route the user is traveling, the remaining distance,...
+#### Hàm **onProgressChange** lắng nghe khi người dùng di chuyển, liên tục cập nhật thông tin về tuyến đường người dùng đang di chuyển, khoảng cách còn lại,...
 ```java
     @Override
     public void onArrival() {
@@ -765,11 +769,23 @@ In **launchNavigation** function, there're two **startNavigation** function call
         isArrived=true;
     }
 ```
-**onArrival** function listen when user is arrival to the destination location
+Hàm **onArrival** lắng nghe khi người dùng đã di chuyển tới đích **(destination)**, từ đó có thể tự tạo thông báo hoặc alert cho người dùng.
+
+```java
+    @Override
+    public boolean onMapClick(@NonNull LatLng latLng) {
+        getCurrentLocation();
+        destination = Point.fromLngLat(latLng.getLongitude(), latLng.getLatitude());
+        if (origin != null) {
+            fetchRoute(origin, destination);
+        }
+        return false;
+    }
+```
+Hàm **onMapClick** sẽ nhận vị trí hiện tại và lấy đường đi từ vị trí hiện tại đến vị trí mà người dùng đã chọn.
 
 
-
-Adding the following **callbacks** functions to ensure proper initialization and memory management, as well as handling user actions, the NavigationView component must be linked to the activity's lifecycle using some callbacks below. This allows the NavigationView to properly handle the activity's lifecycle and respond accordingly.
+Thêm các hàm **callbacks** sau để đảm bảo khởi tạo và quản lý bộ nhớ phù hợp, cũng như xử lý các actions của người dùng, thành phần NavigationView phải được liên kết với vòng đời của activity bằng cách sử dụng một số callbacks dưới đây. Điều này cho phép NavigationView xử lý đúng lifecycle của activity và phản hồi tương ứng.
 ```java
 
     @Override
@@ -843,7 +859,7 @@ Adding the following **callbacks** functions to ensure proper initialization and
     }
 
 ```
-## At **MainActivity**, add the function to check location permission and push to the navigation activity
+## Tại **MainActivity**, thêm hàm kiểm tra quyền vị trí và button chuyển qua màn hình dẫn đường
 ```java
 
 public class MainActivity extends AppCompatActivity implements PermissionsListener {
@@ -917,7 +933,7 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
     }
 }
 ```
-In **activity_main.xml** file, add button layout
+Tại file **activity_main.xml**, thêm layout cho button phía trên
 ```xml
 
     <Button
@@ -970,11 +986,11 @@ In **activity_main.xml** file, add button layout
         app:layout_constraintTop_toBottomOf="@+id/testSpeech"
         />
 ```
-# **Custom Navigaion UI**
+# **Custom UI (Tuỳ chỉnh giao diện)**
 ```java
     navigationView.initViewConfig(true);
 ``` 
-In the onCreate callback, add this code to hide all of the navigation UI, the sdk will show the map and navigation only.
+Tại hàm onCreate, thêm đoạn code phía trên để ẩn đi toàn bộ giao diện mặc định, chỉ để lại phần bản đồ và phần dẫn đường. Các thông tin của chuyến đi sẽ được cung cấp đầy đủ.
 
 ```xml
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -1025,23 +1041,23 @@ In the onCreate callback, add this code to hide all of the navigation UI, the sd
             app:layout_constraintStart_toStartOf="parent" />
     </androidx.appcompat.widget.LinearLayoutCompat>
 ```
-Add this code to xml layout of VietmapNavigationActivity
+Thêm đoạn code trên vào file layout xml của VietmapNavigationActivity
 
 ```java
+
     private Button recenterButton;
     private Button overViewRouteButton;
     private Button stopNavigation;
 ```
+Khai báo thêm 3 button để thực hiện các thao tác như về giữa, xem toàn bộ tuyến đường, huỷ dẫn đường
 
-Define 3 buttons to show 3 action re-center to the navigation, overview all route, cancel navigation.
-
-## **Handle when user click on 3 button above**
--   Define **NavigationPresenter** in **onCreate** function
+## **Các hàm lắng nghe và thực thi trong màn hình tuỳ chỉnh giao diện**
+-   Khởi tạo biến **NavigationPresenter** tại hàm **onCreate**
 ```java
     NavigationPresenter navigationPresenter = navigationView.getNavigationPresenter();
 ```
-### Handle above function:
--  **(recenterFunction)**:
+### Tạo controller để điều khiển các hàm:
+-   Hàm về giữa **(recenterFunction)**:
 ```java
     recenterButton.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -1051,14 +1067,14 @@ Define 3 buttons to show 3 action re-center to the navigation, overview all rout
         }
     });
 ```
--  **(routeOverViewFunction)**:
+-   Hàm xem tổng quan đường đi **(routeOverViewFunction)**:
 ```java
     overViewRouteButton.setOnClickListener(view -> {
         navigationPresenter.onRouteOverviewClick();
         changeNavigationActionState(false);
     });
 ```
--  **(stopNavigation)**:
+-   Hàm kết thúc dẫn đường **(stopNavigation)**:
 ```java
     stopNavigation.setOnClickListener(view -> {
         changeNavigationActionState(false);
@@ -1066,26 +1082,26 @@ Define 3 buttons to show 3 action re-center to the navigation, overview all rout
         stopNavigationFunction();
     });
 ```
--   Add below code to **stopNavigationFunction**:
+-   Chỉnh sửa hàm **stopNavigationFunction** như sau:
 ```java
     void stopNavigationFunction(){
         navigationView.stopNavigation();
         vietmapNavigation.stopNavigation();
         launchNavigationFab.show();
-        //Add below code
+        //Thêm 3 dòng code dưới đây 
         recenterButton.setVisibility(View.GONE);
         overViewRouteButton.setVisibility(View.GONE);
         stopNavigation.setVisibility(View.GONE);
     }
 ```
--   Listen when user move map, then show the recenter button **(recenterButton)**:
+-   Hàm lắng nghe khi người dùng di chuyển bản đồ để hiển thị nút quay về đường đi **(recenterButton)**:
 ```java
     @Override
     public void onMoveBegin(@NonNull MoveGestureDetector moveGestureDetector) {
         changeNavigationActionState(false);
     }
 ```
--   Create a function to show/hide 3 button above **(changeNavigationActionState)**:
+-   Hàm thay đổi trạng thái của các nút nhấn **(changeNavigationActionState)**:
 ```java
     void changeNavigationActionState(boolean isNavigationRunning) {
         if (!isNavigationRunning) {
@@ -1099,7 +1115,7 @@ Define 3 buttons to show 3 action re-center to the navigation, overview all rout
         }
     }
 ```
--   Add below code to the **initializeViews** function:
+-   Chỉnh sửa hàm **initializeViews**:
 ```java
 private void initializeViews(@Nullable Bundle savedInstanceState) {
         setContentView(R.layout.activity_viet_map_navigation);
@@ -1115,13 +1131,13 @@ private void initializeViews(@Nullable Bundle savedInstanceState) {
             launchNavigation();
         });
         mapView.getMapAsync(this);
-        /// Add the below code
+        /// Thêm 3 dòng dưới đây
         overViewRouteButton = findViewById(R.id.overViewRouteButton);
         stopNavigation = findViewById(R.id.stopNavigation);
         recenterButton = findViewById(R.id.recenterBtnCustom);
     }
 ```
-- Add below code to the **launchNavigation** function
+- Thêm đoạn code sau vào hàm **launchNavigation**
 ```java
     private void launchNavigation() {
     ...
@@ -1129,7 +1145,7 @@ private void initializeViews(@Nullable Bundle savedInstanceState) {
     ...
     }
 ```
-On **stopNavigation** function:
+Chỉnh sửa hàm **stopNavigation**:
 ```java
     void stopNavigationFunction(){
         navigationView.stopNavigation();
@@ -1141,14 +1157,14 @@ On **stopNavigation** function:
     }
 ```
 
-- All information about navigation will response in [_**onProgressChange**_](/README.md#onprogresschange-function-listen-as-the-user-moves-continuously-update-information-about-the-route-the-user-is-traveling-the-remaining-distance)
+- Các thông tin về đường đi, khoảng cách,... được trả về tại hàm [_**onProgressChange**_](/README.md#hàm-onprogresschange-lắng-nghe-khi-người-dùng-di-chuyển-liên-tục-cập-nhật-thông-tin-về-tuyến-đường-người-dùng-đang-di-chuyển-khoảng-cách-còn-lại)
 
-# Add **apikey** and  **styleUrl**
-To ensure that the application does not crash when running, you need to add the full **styleUrl** and **apikey** that VietMap provides at the following locations:
+# Thêm **apikey** và  **styleUrl**
+Để đảm bảo ứng dụng không bị crash khi chạy, bạn cần thêm đầy đủ **styleUrl** và **apikey** mà VietMap cung cấp tại các vi trí sau:
 
-[Add **_styleUrl_** in _src/values/string.xml_ file](/README.md#note-need-to-add-styleurl-in-position-your_style_url_here-for-key-map_view_style_url-to-run-navigation)
+[Thêm **_styleUrl_** tại file _src/values/string.xml_](/README.md#lưu-ý-cần-thêm-styleurl-cho-key-map_view_style_url-để-chạy-navigation)
 
-[Add **_styleUrl_** in **onMapReady** function](/README.md#in-onmapready-callback-function)
+[Thêm **_styleUrl_** tại hàm **onMapReady**](/README.md#tại-hàm-onmapready)
 
 
-[Add **_apikey_** in **fetchRoute** function](/README.md#iv-fetch-route-find-a-route-between-two-coordinates)
+[Thêm **_apikey_** tại hàm **fetchRoute**](/README.md#từ-hai-điểm-point-và-destination-này-chúng-ta-có-thể-gọi-hàm-fetchroute-như-sau)

@@ -174,7 +174,7 @@ public class VietMapNavigationActivity extends AppCompatActivity
 
 
     };
-    private final String apiKey = "YOUR_API_KEY_HERE";
+    private final String apiKey = "95f852d9f8c38e08ceacfd456b59059d0618254a50d3854c";
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
