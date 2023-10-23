@@ -352,7 +352,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         vietmapGL!!.addOnMapLongClickListener(this)
         Toast.makeText(
             this,
-            "Nhấn giữ trên bản đồ hoặc tìm kiếm địa điểm để bắt đầu dẫn đường",
+            "Long tap on the map to place the destination.",
             Toast.LENGTH_LONG
         ).show()
     }
