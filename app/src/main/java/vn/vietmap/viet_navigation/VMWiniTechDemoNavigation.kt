@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -76,7 +77,6 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     private var navigationMapRoute: NavigationMapRoute? = null
     private var directionsRoutes: List<DirectionsRoute>? = null
     private val snapEngine = SnapToRoute()
-    private var apikey: String? = null
     private var simulateRoute = false
     private var primaryRouteIndex = 0
     private var fusedLocationClient: FusedLocationProviderClient? = null
@@ -88,7 +88,6 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     private val routeUtils = RouteUtils()
     private var voiceInstructionsEnabled = true
     private var isBuildingRoute = false
-    private var isStartNavigation = false
     private var origin = Point.fromLngLat(106.675789, 10.759050)
     private var destination = Point.fromLngLat(106.686777, 10.775056)
     private var locationComponent: LocationComponent? = null
@@ -103,7 +102,6 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     var padding: IntArray = intArrayOf(150, 500, 150, 500)
     var isRunning: Boolean = false
     private var options: VietMapGLOptions? = null
-
     /// You can change the options of navigation here (optional)
     private val navigationOptions =
         VietmapNavigationOptions.builder().maxTurnCompletionOffset(30.0).maneuverZoneRadius(40.0)
@@ -138,9 +136,31 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
             this, navigationOptions, locationEngine!!
         )
         mapView!!.getMapAsync(this)
+        val  btnStopNavigation: Button = findViewById(R.id.btnStopNavigation)
+        btnStopNavigation.setOnClickListener {
+            finishNavigation()
+        }
+        val btnStartNavigation: Button = findViewById(R.id.btnStartNavigation)
+        btnStartNavigation.setOnClickListener {
+            startNavigation()
+        }
+        val btnOverview: Button = findViewById(R.id.btnOverview)
+        btnOverview.setOnClickListener {
+            overViewRoute()
+        }
+        val btnRecenter : Button = findViewById(R.id.btnRecenter)
+        btnRecenter.setOnClickListener {
+            recenter()
+        }
 
 
     }
+
+    private fun overViewRoute() {
+        isOverviewing = true
+        routeProgress?.let { showRouteOverview(padding, it) }
+    }
+
 
     private fun clearRoute() {
         if (navigationMapRoute != null) {
@@ -148,6 +168,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         }
         currentRoute = null
     }
+
 /*
 
 1. Can we get the Terminal/Vehicls's current speed information?
@@ -320,9 +341,10 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         vietmapGL = p0
         vietmapGL!!.setStyle(
             Style.Builder()
-                .fromUri("YOUR_STYLE_MAP_HERE")
+                .fromUri("YOUR_STYLE_URI_HERE")
         ) { style: Style? ->
             initLocationEngine()
+
             enableLocationComponent(style)
             initMapRoute()
         }
@@ -355,10 +377,10 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
             locationComponent!!.setCameraMode(
                 CameraMode.TRACKING_GPS_NORTH, 750L, 18.0, 10000.0, 10000.0, null
             )
-            locationComponent!!.setLocationComponentEnabled(true)
+            locationComponent!!.isLocationComponentEnabled = true
             locationComponent!!.zoomWhileTracking(19.0)
-            locationComponent!!.setRenderMode(RenderMode.GPS)
-            locationComponent!!.setLocationEngine(locationEngine)
+            locationComponent!!.renderMode = RenderMode.GPS
+            locationComponent!!.locationEngine = locationEngine
         }
     }
 
@@ -428,6 +450,31 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         /// You can simple call speed or compass with this method
         // location?.speed
         // location?.bearing
+        
+        /// Some useful data
+        /*
+        
+        val bannerInstructionsList: List<BannerInstructions> =
+            routeProgress.currentLegProgress().currentStep().bannerInstructions() as List<BannerInstructions>
+        currentModifier = bannerInstructionsList?.get(0)?.primary()?.modifier()
+        currentModifierType= bannerInstructionsList?.get(0)?.primary()?.type()
+        // val util = RouteUtils()
+        // arrived = util.isArrivalEvent(routeProgress) && util.isLastLeg(routeProgress)
+        distanceRemaining = routeProgress.distanceRemaining().toFloat()
+        durationRemaining = routeProgress.durationRemaining()
+        distanceTraveled = routeProgress.distanceTraveled().toFloat()
+        legIndex = routeProgress.currentLegProgress()?.stepIndex()
+        // stepIndex = routeProgress.stepIndex
+        val leg = routeProgress.currentLeg()
+        if (leg != null)
+            currentLeg = VietMapRouteLeg(leg)
+        currentStepInstruction = bannerInstructionsList?.get(0)
+            ?.primary()
+            ?.text()
+        currentLegDistanceTraveled = routeProgress.currentLegProgress()?.distanceTraveled()?.toFloat()
+        currentLegDistanceRemaining = routeProgress.currentLegProgress()?.distanceRemaining()?.toFloat()
+        distanceToNextTurn = routeProgress.stepDistanceRemaining().toFloat()
+         */
         if (!isNavigationCanceled && location != null && routeProgress != null) {
             try {
                 val noRoutes: Boolean = directionsRoutes?.isEmpty() ?: true
