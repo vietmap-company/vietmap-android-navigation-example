@@ -97,8 +97,8 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     private var isNavigationInProgress = false
     private var isNavigationCanceled = false
     var zoom = 20.0
-    var bearing = 10000.0
-    var tilt = 10000.0
+    var bearing = 0.0
+    var tilt = 0.0
     var padding: IntArray = intArrayOf(150, 500, 150, 500)
     var isRunning: Boolean = false
     private var options: VietMapGLOptions? = null
