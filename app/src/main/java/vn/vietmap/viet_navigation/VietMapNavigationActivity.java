@@ -174,7 +174,7 @@ public class VietMapNavigationActivity extends AppCompatActivity
 
 
     };
-    private final String apiKey = "95f852d9f8c38e08ceacfd456b59059d0618254a50d3854c";
+    private final String apiKey = "YOUR_API_KEY_HERE";
 
     public static double round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
@@ -377,7 +377,7 @@ public class VietMapNavigationActivity extends AppCompatActivity
     @Override
     public void onMapReady(@NonNull VietMapGL vietmapGL) {
         this.vietmapGL = vietmapGL;
-        vietmapGL.setStyle(new Style.Builder().fromUri("https://run.mocky.io/v3/961aaa3a-f380-46be-9159-09cc985d9326"), style -> {
+        vietmapGL.setStyle(new Style.Builder().fromUri("YOUR_MAP_STYLE_HERE"), style -> {
             initLocationEngine();
             getCurrentLocation(true, false);
             enableLocationComponent(style);
@@ -489,10 +489,9 @@ public class VietMapNavigationActivity extends AppCompatActivity
     }
 
     private void fetchRoute(Point origin, Point destination, @Nullable Double bearing) {
-        System.out.println("Bearingg-------------------" + bearing);
         NavigationRoute.Builder builder = NavigationRoute
                 .builder(this)
-                .apikey("95f852d9f8c38e08ceacfd456b59059d0618254a50d3854c")
+                .apikey("YOUR_API_KEY_HERE")
                 .origin(origin, bearing, bearing).destination(destination, bearing, bearing);
 
         builder.build().getRoute(this);
@@ -603,6 +602,7 @@ public class VietMapNavigationActivity extends AppCompatActivity
                 .shouldSimulateRoute(false)
                 .progressChangeListener(progressChangeListener)
                 .directionsRoute(route)
+
                 .onMoveListener(this);
 
         navigationView.setCameraDistance(100L);

@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import vn.vietmap.viet_navigation.R;
 import vn.vietmap.vietmapsdk.location.permissions.PermissionsListener;
 import vn.vietmap.vietmapsdk.location.permissions.PermissionsManager;
 
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
         Button button =  findViewById(R.id.pushToNavigationScreen);
         Button ttsButton = findViewById(R.id.testSpeech);
         Button speechAgain = findViewById(R.id.speechAgain);
-        Intent it = new Intent(this, VietMapNavigationActivity.class);
+        Intent it = new Intent(this, VMWiniTechDemoNavigation.class);
         button.setOnClickListener(view -> {
             startActivity(it);
             speechAgain.setVisibility(View.GONE);
