@@ -2,6 +2,7 @@ package vn.vietmap.viet_navigation
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.PointF
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import com.google.android.gms.location.LocationServices
 import com.mapbox.api.directions.v5.models.BannerInstructions
 import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.api.directions.v5.models.DirectionsRoute
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import retrofit2.Call
 import retrofit2.Callback
@@ -341,7 +343,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         vietmapGL = p0
         vietmapGL!!.setStyle(
             Style.Builder()
-                .fromUri("YOUR_STYLE_URI_HERE")
+                .fromUri("https://maps.vietmap.vn/api/navigations/tilemaps/styles/light?apikey=89cb1c3c260c27ea71a115ece3c8d7cec462e7a4c14f0944")
         ) { style: Style? ->
             initLocationEngine()
 
@@ -385,8 +387,8 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     }
 
     override fun onMapClick(p0: LatLng): Boolean {
-        startNavigation()
-        return false;
+        // handle on Map click here
+        return false
     }
 
     private fun showRouteOverview(padding: IntArray?, currentRouteProgress: RouteProgress) {
