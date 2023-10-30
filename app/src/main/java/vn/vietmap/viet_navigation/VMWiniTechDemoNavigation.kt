@@ -1,8 +1,14 @@
 package vn.vietmap.viet_navigation
 
+//import android.R
+
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.PointF
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
@@ -10,17 +16,18 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.mapbox.api.directions.v5.models.BannerInstructions
 import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.api.directions.v5.models.DirectionsRoute
-import com.mapbox.geojson.Feature
 import com.mapbox.geojson.Point
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import timber.log.Timber
+import vn.vietmap.android.gestures.RotateGestureDetector
 import vn.vietmap.services.android.navigation.ui.v5.camera.CameraOverviewCancelableCallback
 import vn.vietmap.services.android.navigation.ui.v5.listeners.BannerInstructionsListener
 import vn.vietmap.services.android.navigation.ui.v5.listeners.NavigationListener
@@ -45,7 +52,10 @@ import vn.vietmap.services.android.navigation.v5.routeprogress.RouteProgress
 import vn.vietmap.services.android.navigation.v5.snap.SnapToRoute
 import vn.vietmap.services.android.navigation.v5.utils.RouteUtils
 import vn.vietmap.viet_navigation.models.CurrentCenterPoint
+import vn.vietmap.viet_navigation.util.IconUtils
 import vn.vietmap.vietmapsdk.Vietmap
+import vn.vietmap.vietmapsdk.annotations.Marker
+import vn.vietmap.vietmapsdk.annotations.MarkerOptions
 import vn.vietmap.vietmapsdk.camera.CameraPosition
 import vn.vietmap.vietmapsdk.camera.CameraUpdate
 import vn.vietmap.vietmapsdk.camera.CameraUpdateFactory
@@ -59,15 +69,19 @@ import vn.vietmap.vietmapsdk.location.engine.LocationEngineResult
 import vn.vietmap.vietmapsdk.location.modes.CameraMode
 import vn.vietmap.vietmapsdk.location.modes.RenderMode
 import vn.vietmap.vietmapsdk.maps.*
+import vn.vietmap.vietmapsdk.plugins.annotation.SymbolManager
+import vn.vietmap.vietmapsdk.plugins.annotation.SymbolOptions
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+
 class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, ProgressChangeListener,
     OffRouteListener, MilestoneEventListener, NavigationEventListener, NavigationListener,
     FasterRouteListener, SpeechAnnouncementListener, BannerInstructionsListener, RouteListener,
     VietMapGL.OnMapLongClickListener, VietMapGL.OnMapClickListener,
+    VietMapGL.OnRotateListener,
     MapView.OnDidFinishRenderingMapListener {
 
     private var mapView: MapView? = null
@@ -104,6 +118,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
     var padding: IntArray = intArrayOf(150, 500, 150, 500)
     var isRunning: Boolean = false
     private var options: VietMapGLOptions? = null
+
     /// You can change the options of navigation here (optional)
     private val navigationOptions =
         VietmapNavigationOptions.builder().maxTurnCompletionOffset(30.0).maneuverZoneRadius(40.0)
@@ -138,7 +153,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
             this, navigationOptions, locationEngine!!
         )
         mapView!!.getMapAsync(this)
-        val  btnStopNavigation: Button = findViewById(R.id.btnStopNavigation)
+        val btnStopNavigation: Button = findViewById(R.id.btnStopNavigation)
         btnStopNavigation.setOnClickListener {
             finishNavigation()
         }
@@ -150,7 +165,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         btnOverview.setOnClickListener {
             overViewRoute()
         }
-        val btnRecenter : Button = findViewById(R.id.btnRecenter)
+        val btnRecenter: Button = findViewById(R.id.btnRecenter)
         btnRecenter.setOnClickListener {
             recenter()
         }
@@ -171,11 +186,11 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         currentRoute = null
     }
 
-/*
+    /*
 
-1. Can we get the Terminal/Vehicls's current speed information?
-3. Can we get the Compass Information?
- */
+    1. Can we get the Terminal/Vehicls's current speed information?
+    3. Can we get the Compass Information?
+     */
     private fun getUserCurrentSpeedAndCompass() {
         if (checkPermission()) {
             locationComponent?.locationEngine?.getLastLocation(object :
@@ -202,11 +217,9 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         }
     }
 
-
-
     private fun initMapRoute() {
         if (vietmapGL != null) {
-            navigationMapRoute = NavigationMapRoute(mapView!!, vietmapGL!!)
+            navigationMapRoute = NavigationMapRoute(mapView!!, vietmapGL!!, "vmadmin_province")
         }
 
         navigationMapRoute?.setOnRouteSelectionChangeListener {
@@ -343,20 +356,24 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         vietmapGL = p0
         vietmapGL!!.setStyle(
             Style.Builder()
-                .fromUri("https://maps.vietmap.vn/api/maps/light/styles.json?apikey=YOUR_API_KEY_HERE")
+                .fromUri("https://maps.vietmap.vn/api/maps/light/styles.json?apikey=89cb1c3c260c27ea71a115ece3c8d7cec462e7a4c14f0944")
         ) { style: Style? ->
             initLocationEngine()
 
             enableLocationComponent(style)
+
             initMapRoute()
         }
         vietmapGL!!.addOnMapClickListener(this)
         vietmapGL!!.addOnMapLongClickListener(this)
+        vietmapGL!!.addOnRotateListener(this)
         Toast.makeText(
             this,
             "Long tap on the map to place the destination.",
             Toast.LENGTH_LONG
         ).show()
+
+
     }
 
 
@@ -384,9 +401,11 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
             locationComponent!!.renderMode = RenderMode.GPS
             locationComponent!!.locationEngine = locationEngine
         }
+
     }
 
     override fun onMapClick(p0: LatLng): Boolean {
+        addMarker(p0)
         // handle on Map click here
         return false
     }
@@ -425,10 +444,12 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         )
     }
 
+
     private fun buildResetCameraUpdate(): CameraUpdate {
         val resetPosition: CameraPosition = CameraPosition.Builder().tilt(0.0).bearing(0.0).build()
         return CameraUpdateFactory.newCameraPosition(resetPosition)
     }
+
 
     private fun buildOverviewCameraUpdate(
         padding: IntArray, routePoints: List<Point>
@@ -452,8 +473,8 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         /// You can simple call speed or compass with this method
         // location?.speed
         // location?.bearing
-        
         /// Some useful data
+
         /*
         
         val bannerInstructionsList: List<BannerInstructions> =
@@ -470,6 +491,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         val leg = routeProgress.currentLeg()
         if (leg != null)
             currentLeg = VietMapRouteLeg(leg)
+
         currentStepInstruction = bannerInstructionsList?.get(0)
             ?.primary()
             ?.text()
@@ -524,7 +546,6 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
                 cameraUpdate, 1000
             )
         } else {
-            println(routeProgress.currentLegProgress().currentStepProgress().distanceTraveled())
             if (routeProgress.currentLegProgress().currentStepProgress()
                     .distanceTraveled() > 30 && !isOverviewing
             ) {
@@ -675,7 +696,6 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         getCurrentLocation()
         destination = Point.fromLngLat(latLng.longitude, latLng.latitude)
         if (origin != null) {
-            println("fetching route")
             fetchRouteWithBearing(false)
         }
         return false
@@ -719,7 +739,7 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
 
     private fun fetchRoute(isStartNavigation: Boolean, bearing: Float?) {
         val builder =
-            NavigationRoute.builder(this).apikey("YOUR_API_KEY_HERE")
+            NavigationRoute.builder(this).apikey("89cb1c3c260c27ea71a115ece3c8d7cec462e7a4c14f0944")
                 .origin(origin, bearing?.toDouble(), bearing?.toDouble())
                 .destination(destination, bearing?.toDouble(), bearing?.toDouble())
         builder.build().getRoute(object : Callback<DirectionsResponse> {
@@ -737,7 +757,9 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
                 if (navigationMapRoute != null) {
                     navigationMapRoute?.removeRoute()
                 } else {
-                    navigationMapRoute = NavigationMapRoute(mapView!!, vietmapGL!!)
+                    navigationMapRoute =
+                        NavigationMapRoute(mapView!!, vietmapGL!!, "vmadmin_province")
+
                 }
 
                 //show multiple route to map
@@ -766,15 +788,35 @@ class VMWiniTechDemoNavigation : AppCompatActivity(), OnMapReadyCallback, Progre
         })
     }
 
-    private fun validRouteResponse(response: Response<DirectionsResponse>): Boolean {
-        return response.body() != null && !response.body()!!.routes().isEmpty()
+    private fun addMarker(position:LatLng ): Marker {
+        return vietmapGL!!.addMarker(
+            MarkerOptions()
+                .position(position)
+                .icon(
+                    IconUtils().drawableToIcon(
+                        this,
+                        R.drawable.continue_straight,
+                        ResourcesCompat.getColor(resources,R.color.blue , theme)
+                    )
+                )
+        )
     }
-
     private fun checkPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this, Manifest.permission.ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
             this, Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun onRotateBegin(p0: RotateGestureDetector) {
+    }
+
+    override fun onRotate(p0: RotateGestureDetector) {
+
+    }
+
+    override fun onRotateEnd(p0: RotateGestureDetector) {
+        println(p0.deltaSinceLast*360)
     }
 }
