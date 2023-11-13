@@ -1,4 +1,6 @@
 # **VietMap Navigation Android SDK documentation**
+
+[<img src="https://bizweb.dktcdn.net/100/415/690/themes/804206/assets/logo.png?1689561872933" height="40"/> </p>](https://vietmap.vn/maps-api)
 ## Table of contents
 [1.  Gradle and AndroidManifest configure](/README.md#i-add-dependencies-below-to-buildgradle-module-app)
 
