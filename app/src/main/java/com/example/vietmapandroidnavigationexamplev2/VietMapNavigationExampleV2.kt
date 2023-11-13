@@ -88,7 +88,6 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     private var primaryRouteIndex = 0
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var navigation: VietmapNavigation? = null
-
     private var speechPlayerProvider: SpeechPlayerProvider? = null
     private var speechPlayer: SpeechPlayer? = null
     private var routeProgress: RouteProgress? = null

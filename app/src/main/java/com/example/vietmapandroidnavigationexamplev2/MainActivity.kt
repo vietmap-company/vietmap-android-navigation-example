@@ -25,13 +25,18 @@ class MainActivity : AppCompatActivity(), PermissionsListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val button: Button = findViewById(R.id.pushToNavigationScreen)
+        val navigationButton: Button = findViewById(R.id.pushToNavigationScreen)
+        val mapButton: Button = findViewById(R.id.pushToMapScreen)
         val ttsButton: Button = findViewById(R.id.testSpeech)
         val speechAgain: Button = findViewById(R.id.speechAgain)
-        val intent = Intent(this, VietMapNavigationExampleV2::class.java)
-        button.setOnClickListener {
-            startActivity(intent)
+        val navigationIntent = Intent(this, VietMapNavigationExampleV2::class.java)
+        val mapIntent  = Intent(this, VietMapMapViewExampleV2::class.java)
+        navigationButton.setOnClickListener {
+            startActivity(navigationIntent)
             speechAgain.visibility = GONE
+        }
+        mapButton.setOnClickListener {
+            startActivity(mapIntent)
         }
         speechAgain.setOnClickListener { speakOut("Ngôn ngữ: Tiếng Việt") }
         ttsButton.setOnClickListener {
