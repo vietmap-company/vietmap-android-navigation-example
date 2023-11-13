@@ -56,14 +56,13 @@ allprojects {
 }
 ```
 Upgrade the **compileSdk** and **targetSdk** to version **_34_**
-```
+```gradle
 compileSdk 34
 ```
-```
+```gradle
 targetSdk 34
 ```
 - Add the necessary permission request to the **AndroidManifest.xml** file
-
 ```xml
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -108,8 +107,8 @@ Add below code to **xml** file of created **activity**
     }
 ```
 ### Add below code to **onCreated** function
+- VietMap SDK need to be initialized in the **onCreate** function of the activity to work properly
 ```kotlin
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_viet_map_map_view_example_v2)
@@ -123,10 +122,13 @@ Add below code to **xml** file of created **activity**
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { vietMapGL: VietMapGL ->
             this.vietMapGL = vietMapGL
+            
+            /// Add vietmap vector style to vietmapSDK
             vietMapGL.setStyle(
                 Style.Builder()
                     .fromUri("https://maps.vietmap.vn/api/maps/light/styles.json?apikey=YOUR_API_KEY_HERE")
             )
+
             vietMapGL.setOnPolylineClickListener { polyline: Polyline ->
                 Toast.makeText(
                     this ,
@@ -168,9 +170,10 @@ Add below code to **xml** file of created **activity**
 
 ### Add polyline
 ```kotlin
-    polylineOptions!!.addAll(allPolylines)
-    polylines = vietMapGL.addPolylines(polylineOptions!!)
+    /// Define list of polyline options
+    private var polylineOptions: ArrayList<PolylineOptions?>? = ArrayList()
 
+    /// Define all polylines to add to the map
     private val allPolylines: List<PolylineOptions?>
         private get() {
             val options: MutableList<PolylineOptions?> = ArrayList()
@@ -189,10 +192,15 @@ Add below code to **xml** file of created **activity**
         line.color(Color.parseColor(color))
         return line
     }
+
+    /// Add all polylines to the map
+    polylineOptions!!.addAll(allPolylines)
+    polylines = vietMapGL.addPolylines(polylineOptions!!)
 ```
 
 ### Add a polygon
 ```kotlin
+    /// Define list of lat lng points to draw a polygon
     val STAR_SHAPE_POINTS: ArrayList<LatLng?> = object : ArrayList<LatLng?>() {
         init {
             add(LatLng(10.791257, 106.669189))
@@ -201,13 +209,16 @@ Add below code to **xml** file of created **activity**
             add(LatLng(16.469602, 107.577462))
         }
     }
+
+    /// Add a polygon to the map
     polygon = vietMapGL.addPolygon(
         PolygonOptions()
-            .addAll(Config.STAR_SHAPE_POINTS)
+            .addAll(STAR_SHAPE_POINTS)
             .fillColor(Color.parseColor("#3bb2d0"))
     )
 ```
 ### Implement on map click listener
+- Add a callback to the activity to handle when the user clicks on the map, will return the clicked latLng
 ```kotlin
     /// Make the activity implement OnMapClickListener from VietMapGL
     class VietMapMapViewExampleV2 : AppCompatActivity(),VietMapGL.OnMapClickListener{}
@@ -269,6 +280,7 @@ Add below code to **xml** file of created **activity**
         locationComponent!!.renderMode = vietmapRenderModes[0]
     }
 
+    /// check the permission is granted or not before using location
     private fun checkPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this, Manifest.permission.ACCESS_FINE_LOCATION
@@ -295,6 +307,7 @@ Add below code to **xml** file of created **activity**
 
 
 ### Add some necessary function
+- Below functions are necessary to add to the activity, to ensure that the application does not crash when running
 ```kotlin
     override fun onStart() {
         super.onStart()

@@ -296,7 +296,6 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     OffRouteListener, MilestoneEventListener, NavigationEventListener, NavigationListener,
     FasterRouteListener, SpeechAnnouncementListener, BannerInstructionsListener, RouteListener,
     VietMapGL.OnMapLongClickListener, VietMapGL.OnMapClickListener,
-    VietMapGL.OnRotateListener,
     MapView.OnDidFinishRenderingMapListener{
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -338,11 +337,11 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     private var animateBuildRoute = true
     private var isNavigationInProgress = false
     private var isNavigationCanceled = false
-    var zoom = 20.0
-    var bearing = 0.0
-    var tilt = 0.0
-    var padding: IntArray = intArrayOf(150, 500, 150, 500)
-    var isRunning: Boolean = false
+    private var zoom = 20.0
+    private var bearing = 0.0
+    private var tilt = 0.0
+    private var padding: IntArray = intArrayOf(150, 500, 150, 500)
+    private var isRunning: Boolean = false
     private var options: VietMapGLOptions? = null
     private val navigationOptions =
         VietmapNavigationOptions.builder().build()
@@ -388,11 +387,14 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
 ```
 ### Add some necessary function below
 ```kotlin
+
+    // Overview the route on the map, show all the route on the map inside the screen
     private fun overViewRoute() {
         isOverviewing = true
         routeProgress?.let { showRouteOverview(padding, it) }
     }
 
+    /// clear all the route in the map
     private fun clearRoute() {
         if (navigationMapRoute != null) {
             navigationMapRoute?.removeRoute()
@@ -403,9 +405,11 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     /// init the map route and add some listener
     private fun initMapRoute() {
         if (vietmapGL != null) {
+            /// add "vmadmin_province" layer to map to show the route below the roadname, this layer is provided by Vietmap tile map.
             navigationMapRoute = NavigationMapRoute(mapView!!, vietmapGL!!, "vmadmin_province")
         }
 
+        /// callback when user click on another route, this function will be called and show the new route on the map
         navigationMapRoute?.setOnRouteSelectionChangeListener {
             routeClicked = true
             currentRoute = it
@@ -465,6 +469,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
         }
     }
 
+    /// move camera to a specific location with bearing
     private fun moveCamera(location: LatLng, bearing: Float?) {
 
         val cameraPosition = CameraPosition.Builder().target(location).zoom(zoom).tilt(tilt)
@@ -480,6 +485,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
         )
     }
 
+    /// start navigation with current selected route
     private fun startNavigation() {
         tilt = 60.0
         zoom = 19.0
@@ -513,7 +519,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
         }
     }
 
-    /// recenter the map to current location
+    /// recenter the map to current location in the route
     private fun recenter() {
         isOverviewing = false
         if (currentCenterPoint != null) {
@@ -540,6 +546,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
 ### Implement some necessary function 
 
 ```kotlin
+    /// this function will be called when map is ready to use, you can add some listener here to handle user interaction with map
     override fun onMapReady(p0: VietMapGL) {
         vietmapGL = p0
         vietmapGL!!.setStyle(
@@ -649,7 +656,6 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     }
 
     override fun onMilestoneEvent(p0: RouteProgress?, p1: String?, p2: Milestone?) {
-
         if (voiceInstructionsEnabled) {
             playVoiceAnnouncement(p2)
         }
@@ -773,6 +779,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
                 )
         )
     }
+    
     private fun checkPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
             this, Manifest.permission.ACCESS_FINE_LOCATION
