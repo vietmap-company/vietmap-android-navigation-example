@@ -23,7 +23,7 @@ More info at [Vietmap maps APIs services and price](https://vietmap.vn/maps-api)
 Vietmap API [documentation](https://maps.vietmap.vn/docs/map-api/overview/).
 ## Some screenshots of the SDK demo app
 - Download the demo app [here](https://vmnavigation.page.link/route).
-- Demo app source code [here](https://github.com/vietmap-company/flutter-navigation-example)
+- Demo app source code for Flutter [here](https://github.com/vietmap-company/flutter-navigation-example)
 
 
 ![Guide navigation GIF](https://github.com/vietmap-company/vietmap-android-navigation-example/blob/v2.0.0/screenshots/guide_sdk.gif?raw=true)
