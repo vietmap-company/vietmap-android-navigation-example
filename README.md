@@ -12,11 +12,11 @@ Vietmap Map and Navigation SDK for Android is a library that helps developers ea
 
 - Navigation with voice guidance and turn-by-turn instruction ([Android](./README.navigation.md), [iOS](https://maps.vietmap.vn/docs/sdk-mobile/sdk-ios/sdk-ios-ver2.0/), [Flutter](https://pub.dev/packages/vietmap_flutter_navigation)).
 
-- Search for places, addresses, and POIs,... sorted by nearby location.
+- Search for places, addresses, autocomplete, geocode and POIs,... sorted by nearby location ([API document](https://maps.vietmap.vn/docs/map-api/autocomplete-version/autocomplete-ver3.0/)).
 
-- Search for routes between two locations.
+- Search for routes between two locations ([API document](https://maps.vietmap.vn/docs/map-api/route/)).
 
-- Search location by latitude and longitude.
+- Search location by latitude and longitude ([Reverse api document](https://maps.vietmap.vn/docs/map-api/reverse-version/reverse-ver3.0/)).
 
 More info at [Vietmap maps APIs services and price](https://vietmap.vn/maps-api).
 
