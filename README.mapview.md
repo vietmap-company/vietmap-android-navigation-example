@@ -110,14 +110,12 @@ Add below code to **xml** file of created **activity**
 - VietMap SDK need to be initialized in the **onCreate** function of the activity to work properly
 ```kotlin
     override fun onCreate(savedInstanceState: Bundle?) {
+        /// Initialize vietmap SDK, you must add this line to ensure that the SDK works properly, without crashing
+        Vietmap.getInstance(this)
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_viet_map_map_view_example_v2)
 
-        if (savedInstanceState != null) {
-            polylineOptions = savedInstanceState.getParcelableArrayList(STATE_POLYLINE_OPTIONS)
-        } else {
-            polylineOptions!!.addAll(allPolylines)
-        }
         mapView = findViewById(R.id.vmMapView)
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync { vietMapGL: VietMapGL ->
@@ -136,16 +134,6 @@ Add below code to **xml** file of created **activity**
                     Toast.LENGTH_SHORT
                 ).show()
             }
-
-            polylines = vietMapGL.addPolylines(polylineOptions!!)
-
-            polygon = vietMapGL.addPolygon(
-                PolygonOptions()
-                    .addAll(Config.STAR_SHAPE_POINTS)
-                    .fillColor(Config.BLUE_COLOR)
-            )
-
-            vietMapGL?.addOnMapClickListener(this)
         }
     }
 ```
@@ -167,6 +155,7 @@ Add below code to **xml** file of created **activity**
         )
     }
 ```
+- You can find IconUtils class [here](/app/src/main/java/com/example/vietmapandroidnavigationexamplev2/util/IconUtils.kt)
 
 ### Add polyline
 ```kotlin
@@ -194,8 +183,32 @@ Add below code to **xml** file of created **activity**
     }
 
     /// Add all polylines to the map
-    polylineOptions!!.addAll(allPolylines)
-    polylines = vietMapGL.addPolylines(polylineOptions!!)
+    private  fun addPolyline(){
+        /// Add all polylines to the map
+        polylineOptions!!.addAll(allPolylines)
+        polylines = vietMapGL.addPolylines(polylineOptions!!)
+    }
+```
+
+- Implement on polyline click listener
+```kotlin
+
+    private  fun addPolyline(){
+        /// Add all polylines to the map
+        polylineOptions!!.addAll(allPolylines)
+        polylines = vietMapGL.addPolylines(polylineOptions!!)
+        
+        ...
+
+        ///Add below line to implement on polyline click listener
+        vietMapGL.setOnPolylineClickListener { polyline: Polyline ->
+        Toast.makeText(
+                this ,
+                "You clicked on polyline with id = " + polyline.id,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 ```
 
 ### Add a polygon
@@ -211,25 +224,59 @@ Add below code to **xml** file of created **activity**
     }
 
     /// Add a polygon to the map
-    polygon = vietMapGL.addPolygon(
-        PolygonOptions()
-            .addAll(STAR_SHAPE_POINTS)
-            .fillColor(Color.parseColor("#3bb2d0"))
-    )
+    
+    private fun addPolygon(){
+        /// Add a polygon to the map
+        polygon = vietMapGL.addPolygon(
+            PolygonOptions()
+                .addAll(STAR_SHAPE_POINTS)
+                .fillColor(Color.parseColor("#3bb2d0"))
+        )
+    }
+
+```
+- Implement on polygon click listener
+```kotlin
+    private fun addPolygon(){
+        /// Add a polygon to the map
+        polygon = vietMapGL.addPolygon(
+            PolygonOptions()
+                .addAll(STAR_SHAPE_POINTS)
+                .fillColor(Color.parseColor("#3bb2d0"))
+        )
+
+        ...
+
+        /// Add below line to implement on polygon click listener
+        vietMapGL.setOnPolygonClickListener { polygon: Polygon ->
+            Toast.makeText(
+                this ,
+                "You clicked on polygon with id = " + polygon.id,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 ```
 ### Implement on map click listener
 - Add a callback to the activity to handle when the user clicks on the map, will return the clicked latLng
+
 ```kotlin
     /// Make the activity implement OnMapClickListener from VietMapGL
-    class VietMapMapViewExampleV2 : AppCompatActivity(),VietMapGL.OnMapClickListener{}
+    class VietMapMapViewExampleV2 : AppCompatActivity(),VietMapGL.OnMapClickListener{
+        ...
+    }
     
-    /// Add map click listener to vietMapGL
-    vietMapGL?.addOnMapClickListener(this)
+    /// Add map click listener to vietMapGL in onCreated function
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        ...
+        vietMapGL?.addOnMapClickListener(this)
+        ...
+    }
     
     /// Handle onMapClick logic with clicked latLng response
     override fun onMapClick(latLng: LatLng): Boolean {
-        addMarker(latLng)
-        addCustomInfoWindowAdapter()
+        addMarker(latLng) 
         return false
     }
 ```
@@ -283,18 +330,19 @@ Add below code to **xml** file of created **activity**
     /// check the permission is granted or not before using location
     private fun checkPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACCESS_FINE_LOCATION
+            this, ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACCESS_COARSE_LOCATION
+            this, ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+
     private fun initLocationEngine() {
-        locationEngine =
-            LocationEngineProvider.getBestLocationEngine(this)
+        val locationEngineDefault = LocationEngineDefault
+        locationEngine = locationEngineDefault.getDefaultLocationEngine(this)
     }
 ```
-- Add the **initLocationEngine** and **enableLocationComponent** functions to the callback of setStyle function
+- Add the **initLocationEngine** and **enableLocationComponent** functions to the callback of setStyle function inside the **onCreated** function
 ```kotlin
     vietMapGL.setStyle(
         Style.Builder()

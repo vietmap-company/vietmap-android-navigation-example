@@ -167,6 +167,7 @@ class MainActivity : AppCompatActivity(), PermissionsListener {
             ).show()
         }
     }
+}
 ```
 In **activity_main.xml** file, add button layout
 ```xml
@@ -307,7 +308,72 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     }
 }
 ```
+Import below packages to the activity
+```kotlin
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager
+import android.graphics.Color.blue
+import android.location.Location
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import androidx.core.app.ActivityCompat
+import androidx.core.content.res.ResourcesCompat
+import com.example.model.CurrentCenterPoint
+import com.example.ultis.IconUtils
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.mapbox.api.directions.v5.models.BannerInstructions
+import com.mapbox.api.directions.v5.models.DirectionsResponse
+import com.mapbox.api.directions.v5.models.DirectionsRoute
+import com.mapbox.geojson.Point
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import timber.log.Timber
+import vn.vietmap.services.android.navigation.ui.v5.camera.CameraOverviewCancelableCallback
+import vn.vietmap.services.android.navigation.ui.v5.listeners.BannerInstructionsListener
+import vn.vietmap.services.android.navigation.ui.v5.listeners.NavigationListener
+import vn.vietmap.services.android.navigation.ui.v5.listeners.RouteListener
+import vn.vietmap.services.android.navigation.ui.v5.listeners.SpeechAnnouncementListener
+import vn.vietmap.services.android.navigation.ui.v5.voice.NavigationSpeechPlayer
+import vn.vietmap.services.android.navigation.ui.v5.voice.SpeechAnnouncement
+import vn.vietmap.services.android.navigation.ui.v5.voice.SpeechPlayer
+import vn.vietmap.services.android.navigation.ui.v5.voice.SpeechPlayerProvider
+import vn.vietmap.services.android.navigation.v5.location.engine.LocationEngineProvider
+import vn.vietmap.services.android.navigation.v5.location.replay.ReplayRouteLocationEngine
+import vn.vietmap.services.android.navigation.v5.milestone.Milestone
+import vn.vietmap.services.android.navigation.v5.milestone.MilestoneEventListener
+import vn.vietmap.services.android.navigation.v5.milestone.VoiceInstructionMilestone
+import vn.vietmap.services.android.navigation.v5.navigation.*
+import vn.vietmap.services.android.navigation.v5.navigation.camera.RouteInformation
+import vn.vietmap.services.android.navigation.v5.offroute.OffRouteListener
+import vn.vietmap.services.android.navigation.v5.route.FasterRouteListener
+import vn.vietmap.services.android.navigation.v5.routeprogress.ProgressChangeListener
+import vn.vietmap.services.android.navigation.v5.routeprogress.RouteProgress
+import vn.vietmap.services.android.navigation.v5.snap.SnapToRoute
+import vn.vietmap.services.android.navigation.v5.utils.RouteUtils
+import vn.vietmap.vietmapsdk.Vietmap
+import vn.vietmap.vietmapsdk.annotations.Marker
+import vn.vietmap.vietmapsdk.annotations.MarkerOptions
+import vn.vietmap.vietmapsdk.camera.CameraPosition
+import vn.vietmap.vietmapsdk.camera.CameraUpdate
+import vn.vietmap.vietmapsdk.camera.CameraUpdateFactory
+import vn.vietmap.vietmapsdk.geometry.LatLng
+import vn.vietmap.vietmapsdk.geometry.LatLngBounds
+import vn.vietmap.vietmapsdk.location.LocationComponent
+import vn.vietmap.vietmapsdk.location.LocationComponentActivationOptions
+import vn.vietmap.vietmapsdk.location.engine.LocationEngine
+import vn.vietmap.vietmapsdk.location.modes.CameraMode
+import vn.vietmap.vietmapsdk.location.modes.RenderMode
+import vn.vietmap.vietmapsdk.maps.*
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
+```
 ### Define below necessary variables 
 
 ```kotlin
@@ -346,6 +412,8 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     private val navigationOptions =
         VietmapNavigationOptions.builder().build()
 ```
+
+- You can find **CurrentCenterPoint** class in **model** folder of this project ([here](/app/src/main/java/com/example/vietmapandroidnavigationexamplev2/model/CurrentCenterPoint.kt))
 ### Call necessary function in **onCreate** callback
 ```java
     @Override
@@ -558,13 +626,7 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
             initMapRoute()
         }
         vietmapGL!!.addOnMapClickListener(this)
-        vietmapGL!!.addOnMapLongClickListener(this)
-        vietmapGL!!.addOnRotateListener(this)
-        Toast.makeText(
-            this,
-            "Long tap on the map to place the destination.",
-            Toast.LENGTH_LONG
-        ).show()
+        vietmapGL!!.addOnMapLongClickListener(this) 
     }
 
     /// init the location component to start tracking user location and show it on the map
@@ -782,22 +844,11 @@ class VietMapNavigationExampleV2 : AppCompatActivity() , OnMapReadyCallback, Pro
     
     private fun checkPermission(): Boolean {
         return ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACCESS_FINE_LOCATION
+            this, ACCESS_FINE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-            this, Manifest.permission.ACCESS_COARSE_LOCATION
+            this, ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    override fun onRotateBegin(p0: RotateGestureDetector) {
-    }
-
-    override fun onRotate(p0: RotateGestureDetector) {
-
-    }
-
-    override fun onRotateEnd(p0: RotateGestureDetector) {
-        println(p0.deltaSinceLast*360)
-    }
+    } 
 ```
 ### Fetch route between 2 point, with bearing
 ```kotlin 
